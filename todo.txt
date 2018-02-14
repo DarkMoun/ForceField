@@ -1,0 +1,34 @@
+
+A faire:
+	intégration de TinCan/xAPI
+	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences)
+	sauvegarder la progression du joueur (niveaux effectués et compétences acquises)
+	gérer mass, charge
+	système d'aide
+	permettre de choisir les valeurs min max des ui (editor mode)
+	tutoriel
+	visualisation des champs de vecteurs
+
+
+
+Fonctionnalités possibles:
+	objet intermédiaire à récupérer dans les niveaux
+	compter le nombre de force field utilisé par rapport au minimum requis dans le niveau
+	afficher le score à la fin d'un niveau
+	proposer un niveau suivant?
+	fonction undo/redo (mode jeu et mode editeur)
+	copier/coller des objet en editeur
+	intégration de l'outil de création d'un réseau de pétri
+	trail renderer? (afficher la trajectoire de la balle, trajectoire partielle ou dernière trajectoire de la balle)
+	ajouter obstacle changeant la charge de la balle
+	exporter et importer des niveaux
+	selection multiple + drag d'objet? (dans les deux modes de jeu)
+
+Améliorations rapides à faire:
+	ajouter un bouton pour calculer la distance au lieu de la calculée à tout moment (mettre en évidence la distance calculée, l'afficher)
+	proposer "edit" au lieu de "menu" apres avoir réusi un niveau dans "try" de "edit mode"
+	choisir la direction de la balle par un drag et non un slider
+	ui à coté de l'objet sélectionné (et pas en bas à droite)
+
+Bugs à corriger:
+	en superposant des ff scale passe à 0
