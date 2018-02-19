@@ -2,7 +2,6 @@
 using FYFY;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
-using UnityEngine.EventSystems;
 using System;
 
 public class SetUIParameters : FSystem {
@@ -45,11 +44,7 @@ public class SetUIParameters : FSystem {
             if (uiE.name == "DirectionSlider")
             {
                 uiE.GetComponent<Slider>().onValueChanged.AddListener(DirectionSliderChanged);
-            } /*else if (uiE.name == "DirectionXInputField") {
-					uiE.GetComponent<InputField> ().onValueChanged.AddListener(XInputFieldChanged);
-				} else if (uiE.name == "DirectionYInputField") {
-					uiE.GetComponent<InputField> ().onValueChanged.AddListener(YInputFieldChanged);
-				}*/
+            }
             else if (uiE.name == "SpeedSlider")
             {
                 uiE.GetComponent<Slider>().onValueChanged.AddListener(SpeedSliderChanged);
@@ -170,6 +165,33 @@ public class SetUIParameters : FSystem {
 							}
 						}
 					}
+                    if(go.tag == "Object")
+                    {
+                        if (movingGO.First().GetComponent<Move>().directionGO.GetComponentInChildren<PointerOver>() && Input.GetMouseButtonDown(0))
+                        {
+                            gameInfo.First().GetComponent<GameInfo>().ballDirectionChanging = true;
+                        }
+                        if (gameInfo.First().GetComponent<GameInfo>().ballDirectionChanging)
+                        {
+                            Vector3 newDir = Vector3.RotateTowards(movingGO.First().GetComponent<Move>().directionGO.transform.forward, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f))- movingGO.First().GetComponent<Move>().directionGO.transform.position, 360, 0);
+                            movingGO.First().GetComponent<Move>().directionGO.transform.rotation = Quaternion.LookRotation(newDir);
+                            float value = (movingGO.First().GetComponent<Move>().directionGO.transform.rotation.eulerAngles.y - 90) / (-360) + 0.5f;
+                            movingGO.First().GetComponent<Move>().direction = new Vector3((float)Math.Cos((value - 0.5) * 2 * Math.PI), 0, (float)Math.Sin((value - 0.5) * 2 * Math.PI));//set the new direction
+                            movingGO.First().GetComponent<Move>().playerDirection = movingGO.First().GetComponent<Move>().direction;//store the direction set by the player
+                            foreach (Transform child in bP.transform)
+                            {
+                                GameObject uiE = child.gameObject;
+                                if (uiE.name == "DirectionSlider")
+                                {
+                                    uiE.GetComponent<Slider>().value = value;
+                                }
+                            }
+                            if (Input.GetMouseButtonUp(0))
+                            {
+                                gameInfo.First().GetComponent<GameInfo>().ballDirectionChanging = false;
+                            }
+                        }
+                    }
 				}
 			}
 		} else {//if number of selected objects != 1

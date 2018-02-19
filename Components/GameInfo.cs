@@ -32,6 +32,7 @@ public class GameInfo : MonoBehaviour {
     public int nbSelectableGO = 1;
 
 	public bool objectDragged = false;
+    public bool ballDirectionChanging = false;
 	public bool mouseOverHUD = false;
 	public bool mouseNotOverObject = true;
 	public Vector3 cameraPosBeforeDrag;

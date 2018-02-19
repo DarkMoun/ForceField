@@ -10,6 +10,7 @@ public class Select : FSystem {
 	private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
     private Family distButton = FamilyManager.getFamily(new AnyOfTags("DistanceButton"));
+    private Family movingGO = FamilyManager.getFamily(new AllOfComponents(typeof(Move)));
 
     public Select()
     {
@@ -38,12 +39,21 @@ public class Select : FSystem {
 
         //mouse over an object?
 		gi.mouseNotOverObject = true;
-		foreach (GameObject go in clickableGO) {
-			if (go.GetComponent<PointerOver> ()) {
-				gi.mouseNotOverObject = false;
-				break;
-			}
-		}
+        if (movingGO.First().GetComponent<Move>().directionGO.GetComponentInChildren<PointerOver>())
+        {
+            gi.mouseNotOverObject = false;
+        }
+        else
+        {
+            foreach (GameObject go in clickableGO)
+            {
+                if (go.GetComponent<PointerOver>())
+                {
+                    gi.mouseNotOverObject = false;
+                    break;
+                }
+            }
+        }
 
 		if (gi.selectedGO!=0 && Input.GetMouseButtonDown(0) && !gi.mouseOverHUD && gi.mouseNotOverObject) {//if there are selected objects and the left click is pressed over nothing
 			foreach (GameObject g in clickableGO) {

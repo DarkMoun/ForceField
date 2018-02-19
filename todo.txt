@@ -8,6 +8,7 @@ A faire:
 	permettre de choisir les valeurs min max des ui (editor mode)
 	tutoriel
 	visualisation des champs de vecteurs
+	validation de niveau avant la sauvegarde (et pouvoir sauvegarder des niveau non validé mais accessible qu'en editeur)
 
 
 
@@ -25,11 +26,9 @@ Fonctionnalités possibles:
 	selection multiple + drag d'objet? (dans les deux modes de jeu)
 
 Améliorations rapides à faire:
-	proposer "edit" au lieu de "menu" apres avoir réusi un niveau dans "try" de "edit mode"
-	choisir la direction de la balle par un drag et non un slider
 	ui à coté de l'objet sélectionné (et pas en bas à droite)
 	message d'alerte si "try level" alors qu'il y a des objets "draggable" et "editable" (qui seront donc supprimés)
 
 Bugs à corriger:
-	en superposant des ff scale passe à 0
-		size sliders
+	après avoir changé la taille d'un objet avec le slider "both" de l'éditeur, cliquer sur un objet le met à scale = 0
+		 valeurs initiales du slider et de l'input field sont 0 (c'est nécessaire)
