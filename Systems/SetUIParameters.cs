@@ -192,6 +192,18 @@ public class SetUIParameters : FSystem {
                             }
                         }
                     }
+                    if (bP.activeSelf)
+                    {
+                        Vector3 v = new Vector3(movingGO.First().transform.position.x, movingGO.First().transform.position.y, movingGO.First().transform.position.z - movingGO.First().transform.localScale.z * 2);
+                        bP.GetComponent<RectTransform>().position = Camera.main.WorldToScreenPoint(v);
+                        bP.GetComponent<RectTransform>().position = new Vector3(bP.GetComponent<RectTransform>().position.x + bP.GetComponent<RectTransform>().rect.width / 2 + 20, bP.GetComponent<RectTransform>().position.y, bP.GetComponent<RectTransform>().position.z);
+                    }
+                    else if(uiP.activeSelf)
+                    {
+                        Vector3 v = new Vector3(go.transform.position.x, go.transform.position.y, go.transform.position.z - go.transform.localScale.z / 2);
+                        uiP.GetComponent<RectTransform>().position = Camera.main.WorldToScreenPoint(v);
+                        uiP.GetComponent<RectTransform>().position = new Vector3(uiP.GetComponent<RectTransform>().position.x + uiP.GetComponent<RectTransform>().rect.width / 2 + 20, uiP.GetComponent<RectTransform>().position.y, uiP.GetComponent<RectTransform>().position.z);
+                    }
 				}
 			}
 		} else {//if number of selected objects != 1

@@ -26,7 +26,6 @@ Fonctionnalités possibles:
 	selection multiple + drag d'objet? (dans les deux modes de jeu)
 
 Améliorations rapides à faire:
-	ui à coté de l'objet sélectionné (et pas en bas à droite)
 	message d'alerte si "try level" alors qu'il y a des objets "draggable" et "editable" (qui seront donc supprimés)
 
 Bugs à corriger:
