@@ -3,7 +3,8 @@
 public class ForceField : MonoBehaviour {
 	// Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
 	public float value;//charge or mass
-	public float sizex;
+    public float value2;//charge or mass (not used yet)
+    public float sizex;
 	public float sizey;
     //initial values in the level, used to reset the level
 	public float initialValue;

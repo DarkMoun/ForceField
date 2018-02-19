@@ -7,6 +7,7 @@ public class GameInfo : MonoBehaviour {
     public GameObject ballParameters;//ui for the ball
     public GameObject uniformRotator;//ui to rotate uniform force fields
     public GameObject distanceDisplayer;//display the distance between 2 selected object or the position of the seleccted object
+    public GameObject distanceInGame;
     public GameObject editorUI;//ui only visible in editor mode
     public GameObject gameButtons;//pause, play, reset, go to menu
 
@@ -28,6 +29,7 @@ public class GameInfo : MonoBehaviour {
     public int selectedGO = 0;//number of selected gameobjects
 	public bool selectedChanged = true; //true when the selected object just changed
 	public bool selectedChangedEM = true; //same as selectedChanged but in editor mode
+    public int nbSelectableGO = 1;
 
 	public bool objectDragged = false;
 	public bool mouseOverHUD = false;

@@ -9,8 +9,9 @@ public class GenerateFF : FSystem {
 
 	private Family ffGenerator = FamilyManager.getFamily(new AnyOfTags("FFGenerator"));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
+    private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
 
-	protected override void onPause(int currentFrame) {
+    protected override void onPause(int currentFrame) {
 	}
 
 	// Use this to update member variables when system resume.
@@ -48,12 +49,17 @@ public class GenerateFF : FSystem {
 					ff.transform.SetParent (gameInfo.First ().transform);
 					GameObjectManager.bind (ff);//bind to FYFY
 					ff.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));//set position to mouse position
-					ff.GetComponent<Draggable> ().dragged = true;//when created the force field is in "dragged" state
+                    if (ff.GetComponent<ForceField>().ffType == 2)
+                    {
+                        ff.transform.Rotate(0, 180, 0);
+                    }
+                    ff.GetComponent<Draggable> ().dragged = true;//when created the force field is in "dragged" state
+                    ff.GetComponent<Clickable>().isSelected = true;
                     //drag parameters
 					gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;
 					ff.GetComponent<Draggable> ().positionBeforeDrag = ff.transform.position;
 					ff.GetComponent<Draggable> ().fromMouseToCenter = ff.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));
-					limiter.available--;
+                    limiter.available--;
 				}
 			}
 		} else {//in editor mode
@@ -77,12 +83,19 @@ public class GenerateFF : FSystem {
 					ff.transform.SetParent (gameInfo.First ().transform);
 					GameObjectManager.bind (ff);//bind to FYFY
 					ff.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));//set position to mouse position
+                    if (ff.GetComponent<ForceField>()){
+                        if(ff.GetComponent<ForceField>().ffType == 2)
+                        {
+                            ff.transform.Rotate(0, 180, 0);
+                        }
+                    }
 					ff.GetComponent<Draggable> ().dragged = true;//when created the object is in "dragged" state
+                    ff.GetComponent<Clickable>().isSelected = true;
                     //drag parameters
                     gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;
 					ff.GetComponent<Draggable> ().positionBeforeDrag = ff.transform.position;
 					ff.GetComponent<Draggable> ().fromMouseToCenter = ff.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));
-				}
+                }
 			}
 		}
 	}

@@ -8,8 +8,9 @@ public class DragObjects : FSystem {
 
 	private Family draggable = FamilyManager.getFamily(new AllOfComponents(typeof(Draggable), typeof(Clickable)));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
+    private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
 
-	protected override void onPause(int currentFrame) {
+    protected override void onPause(int currentFrame) {
 	}
 
 	// Use this to update member variables when system resume.
@@ -29,7 +30,7 @@ public class DragObjects : FSystem {
 					gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;//an object is dragged
 					go.GetComponent<Draggable> ().positionBeforeDrag = go.transform.position;//store the current go position as position before drag
 					go.GetComponent<Draggable> ().fromMouseToCenter = go.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));//vector from mouse position to screen center before drag (positions in the world)
-				}
+                }
 			}
 		}
 		if(!Input.GetMouseButton(0) && gameInfo.First ().GetComponent<GameInfo> ().objectDragged){//if the left click is released and an object is dragged
@@ -53,7 +54,18 @@ public class DragObjects : FSystem {
                              * the drag and the current position of the mouse is bigger than a certain value
                              * this way the object won't be dragged with a miss click */
 							d.canBeMoved = true;
-							go.GetComponent<Clickable> ().isSelected = true;//select the moved object
+                            if (gameInfo.First().GetComponent<GameInfo>().selectedGO> gameInfo.First().GetComponent<GameInfo>().nbSelectableGO)
+                            {
+                                foreach (GameObject g in clickableGO)
+                                {
+                                    //unselect all objects
+                                    if (g.GetComponent<Clickable>().isSelected)
+                                    {
+                                        g.GetComponent<Clickable>().isSelected = false;
+                                    }
+                                }
+                            }
+                            go.GetComponent<Clickable> ().isSelected = true;//select the moved object
 						}
 					}
 					if (d.canBeMoved) {

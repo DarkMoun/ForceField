@@ -9,6 +9,12 @@ public class Select : FSystem {
 
 	private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
+    private Family distButton = FamilyManager.getFamily(new AnyOfTags("DistanceButton"));
+
+    public Select()
+    {
+        distButton.First().GetComponent<Button>().onClick.AddListener(NbSelectableChange);
+    }
 
 	protected override void onPause(int currentFrame) {
 	}
@@ -52,19 +58,18 @@ public class Select : FSystem {
 			PointerOver po = go.GetComponent<PointerOver> ();
 			//select/unselect objects
 			if (po && !gi.mouseOverHUD && Input.GetMouseButtonDown(0)) { //if mouse over go and left mouse button clicked
-				if (gi.selectedGO == 2 && !go.GetComponent<Clickable> ().isSelected) {//if there are 2 selected go and the clicked go was not selected before click
-					if (gi.selectedGO == 2) {//if there are alread 2 objects selected
-						foreach (GameObject g in clickableGO) {
-                            //unselect the 2 already selected go
-							if (g.GetComponent<Clickable> ().isSelected) {
-								g.GetComponent<Clickable> ().isSelected = false;
-							}
+                bool s = go.GetComponent<Clickable>().isSelected;
+				if (gi.selectedGO == gi.nbSelectableGO && !go.GetComponent<Clickable> ().isSelected) {//if there is a selected go and the clicked go was not selected before click
+					foreach (GameObject g in clickableGO) {
+                        //unselect the selected go
+						if (g.GetComponent<Clickable> ().isSelected) {
+							g.GetComponent<Clickable> ().isSelected = false;
 						}
 					}
 				}
 				gi.selectedChanged = true;//true when the selected object just changed
                 gi.selectedChangedEM = true;//same as selectedChanged but in editor mode
-                go.GetComponent<Clickable> ().isSelected = !go.GetComponent<Clickable> ().isSelected;//select the clicked go
+                go.GetComponent<Clickable> ().isSelected = !s;//select the clicked go or unselect it if it was already selected
 			}
 
 			bool selected = go.GetComponent<Clickable> ().isSelected;
@@ -112,4 +117,24 @@ public class Select : FSystem {
 			}
 		}
 	}
+
+    void NbSelectableChange()
+    {
+        if(gameInfo.First().GetComponent<GameInfo>().nbSelectableGO == 1)
+        {
+            gameInfo.First().GetComponent<GameInfo>().nbSelectableGO = 2;
+        }
+        else
+        {
+            gameInfo.First().GetComponent<GameInfo>().nbSelectableGO = 1;
+            foreach (GameObject g in clickableGO)
+            {
+                //unselect all objects
+                if (g.GetComponent<Clickable>().isSelected)
+                {
+                    g.GetComponent<Clickable>().isSelected = false;
+                }
+            }
+        }
+    }
 }
