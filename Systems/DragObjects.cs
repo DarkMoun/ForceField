@@ -54,23 +54,23 @@ public class DragObjects : FSystem {
                              * the drag and the current position of the mouse is bigger than a certain value
                              * this way the object won't be dragged with a miss click */
 							d.canBeMoved = true;
-                            if (gameInfo.First().GetComponent<GameInfo>().selectedGO> gameInfo.First().GetComponent<GameInfo>().nbSelectableGO)
-                            {
-                                foreach (GameObject g in clickableGO)
-                                {
-                                    //unselect all objects
-                                    if (g.GetComponent<Clickable>().isSelected)
-                                    {
-                                        g.GetComponent<Clickable>().isSelected = false;
-                                    }
-                                }
-                            }
-                            go.GetComponent<Clickable> ().isSelected = true;//select the moved object
 						}
 					}
 					if (d.canBeMoved) {
 						go.transform.position = newPos;//move the object to the new position
-					}
+                        if (gameInfo.First().GetComponent<GameInfo>().selectedGO > gameInfo.First().GetComponent<GameInfo>().nbSelectableGO)
+                        {
+                            foreach (GameObject g in clickableGO)
+                            {
+                                //unselect all objects
+                                if (g.GetComponent<Clickable>().isSelected)
+                                {
+                                    g.GetComponent<Clickable>().isSelected = false;
+                                }
+                            }
+                        }
+                        go.GetComponent<Clickable>().isSelected = true;//select the moved object
+                    }
 				}
 			}
 		}
