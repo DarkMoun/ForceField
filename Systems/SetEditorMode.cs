@@ -211,9 +211,6 @@ public class SetEditorMode : FSystem {
 			RectTransform rt = gameInfo.First ().GetComponent<GameInfo> ().gameButtons.GetComponent<RectTransform> ();
 			rt.sizeDelta = new Vector2 (365, rt.sizeDelta.y);
 			if (!gameInfo.First ().GetComponent<GameInfo> ().justEnteredEditorMode) {
-				foreach (GameObject go in draggable) {
-					go.GetComponent<Draggable> ().isDraggable = go.GetComponent<Draggable> ().canBeMovedOutOfEditor;
-				}
 				foreach (GameObject go in staticGO) {
 					GameObjectManager.removeComponent<Draggable>(go);
 				}
@@ -350,8 +347,13 @@ public class SetEditorMode : FSystem {
 		gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode = true;
 	}
 
-	void ActivatePlayMode(){
-		movingGO.First ().GetComponent<Draggable> ().initialPosition = movingGO.First ().transform.position;
+	void ActivatePlayMode()
+    {
+        foreach (GameObject go in draggable)
+        {
+            go.GetComponent<Draggable>().isDraggable = go.GetComponent<Draggable>().canBeMovedOutOfEditor;
+        }
+        movingGO.First ().GetComponent<Draggable> ().initialPosition = movingGO.First ().transform.position;
 		gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode = false;
 		foreach (GameObject go in forceFields) {
 			ForceField ff = go.GetComponent<ForceField> ();
