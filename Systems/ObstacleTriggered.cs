@@ -14,9 +14,19 @@ public class ObstacleTriggered : FSystem {
 		foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().levelLostText.transform) {
 			if (child.gameObject.name == "Retry") {
 				child.gameObject.GetComponent<Button> ().onClick.AddListener (Retry);
-			} else if (child.gameObject.name == "Menu") {
-				child.gameObject.GetComponent<Button> ().onClick.AddListener (Menu);
-			}
+			} else if (child.gameObject.name == "Menu")
+            {
+                if (GameInfo.loadedFromEditor)
+                {
+                    child.gameObject.GetComponentInChildren<Text>().text = "Edit";
+                    child.gameObject.GetComponent<Button>().onClick.AddListener(Edit);
+                }
+                else
+                {
+                    child.gameObject.GetComponentInChildren<Text>().text = "Menu";
+                    child.gameObject.GetComponent<Button>().onClick.AddListener(Menu);
+                }
+            }
 		}
 	}
 
@@ -52,9 +62,14 @@ public class ObstacleTriggered : FSystem {
 
 	void Retry(){
 		gameInfo.First ().GetComponent<GameInfo> ().askResetBall = true;//reset the position of the ball
-	}
+    }
 
-	void Menu(){
+    void Edit()
+    {
+        gameInfo.First().GetComponent<GameInfo>().levelEditorMode = true;//enter editor mode
+    }
+
+    void Menu(){
 		GameObjectManager.loadScene ("Menu");
 	}
 }
