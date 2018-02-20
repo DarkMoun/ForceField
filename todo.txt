@@ -1,10 +1,10 @@
 
 A faire:
 	intégration de TinCan/xAPI
+	système d'aide
 	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences)
 	sauvegarder la progression du joueur (niveaux effectués et compétences acquises)
 	gérer mass, charge
-	système d'aide
 	permettre de choisir les valeurs min max des ui (editor mode)
 	tutoriel
 	visualisation des champs de vecteurs
@@ -24,10 +24,3 @@ Fonctionnalités possibles:
 	ajouter obstacle changeant la charge de la balle
 	exporter et importer des niveaux
 	selection multiple + drag d'objet? (dans les deux modes de jeu)
-
-Améliorations rapides à faire:
-	message d'alerte si "try level" alors qu'il y a des objets "draggable" et "editable" (qui seront donc supprimés)
-
-Bugs à corriger:
-	après avoir changé la taille d'un objet avec le slider "both" de l'éditeur, cliquer sur un objet le met à scale = 0
-		 valeurs initiales du slider et de l'input field sont 0 (c'est nécessaire)

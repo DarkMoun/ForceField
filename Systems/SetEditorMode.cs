@@ -96,6 +96,10 @@ public class SetEditorMode : FSystem {
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
 		bool editorMode = gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode;
+        if (gameInfo.First().GetComponent<GameInfo>().uiInitialisation)
+        {
+            gameInfo.First().GetComponent<GameInfo>().uiInitialisation = !gameInfo.First().GetComponent<GameInfo>().uiInitialisation;
+        }
 		foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().gameButtons.transform) {
 			GameObject go = child.gameObject;
 			if (go.name == "Game") {
@@ -146,6 +150,7 @@ public class SetEditorMode : FSystem {
 				gameInfo.First ().GetComponent<GameInfo> ().generatorInitialised = false;
 			}
 			if (gameInfo.First ().GetComponent<GameInfo> ().selectedGO == 1 && gameInfo.First ().gameObject.GetComponent<GameInfo> ().selectedChangedEM) {//if only one object is selected
+                gameInfo.First().GetComponent<GameInfo>().uiInitialisation = true;
 				foreach (GameObject go in selectable) {
 					if (go.GetComponent<Clickable> ().isSelected) {
 						bool isCircle = go.GetComponent<CapsuleCollider> ();
@@ -278,17 +283,25 @@ public class SetEditorMode : FSystem {
 		}
 	}
 
-	void BSlider(float value){
-		foreach (InputField i in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<InputField>()) {
-			if (i.gameObject.name == "SizeBInputField") {
-				i.text = "" + (value * 29+1);
-			}
-		}
-		foreach (GameObject go in selectable) {
-			if (go.GetComponent<Clickable> ().isSelected) {
-				go.transform.localScale = new Vector3 (value* 29+1, go.transform.localScale.y, value* 29+1);
-			}
-		}
+	void BSlider(float value)
+    {
+        if (!gameInfo.First().GetComponent<GameInfo>().uiInitialisation)
+        {
+            foreach (InputField i in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<InputField>())
+            {
+                if (i.gameObject.name == "SizeBInputField")
+                {
+                    i.text = "" + (value * 29 + 1);
+                }
+            }
+            foreach (GameObject go in selectable)
+            {
+                if (go.GetComponent<Clickable>().isSelected)
+                {
+                    go.transform.localScale = new Vector3(value * 29 + 1, go.transform.localScale.y, value * 29 + 1);
+                }
+            }
+        }
 	}
 
 	void XInputField(string value){
@@ -322,20 +335,27 @@ public class SetEditorMode : FSystem {
 	}
 
 	void BInputField(string value){
-		foreach (Slider s in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Slider>()) {
-			if (s.gameObject.name == "SizeBSlider" || s.gameObject.name == "SizeXSlider" || s.gameObject.name == "SizeYSlider") {
-				float v;
-				float.TryParse (value, out v);
-				s.value = (v -1)/ 29;
-			}
-		}
-		foreach (GameObject go in selectable) {
-			if (go.GetComponent<Clickable> ().isSelected) {
-                float v;
-                float.TryParse(value, out v);
-                go.transform.localScale = new Vector3 (v, go.transform.localScale.y, v);
-			}
-		}
+        if (!gameInfo.First().GetComponent<GameInfo>().uiInitialisation)
+        {
+            foreach (Slider s in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Slider>())
+            {
+                if (s.gameObject.name == "SizeBSlider" || s.gameObject.name == "SizeXSlider" || s.gameObject.name == "SizeYSlider")
+                {
+                    float v;
+                    float.TryParse(value, out v);
+                    s.value = (v - 1) / 29;
+                }
+            }
+            foreach (GameObject go in selectable)
+            {
+                if (go.GetComponent<Clickable>().isSelected)
+                {
+                    float v;
+                    float.TryParse(value, out v);
+                    go.transform.localScale = new Vector3(v, go.transform.localScale.y, v);
+                }
+            }
+        }
 	}
 
 	void EditableToggle(bool value){

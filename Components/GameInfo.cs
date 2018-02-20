@@ -17,6 +17,7 @@ public class GameInfo : MonoBehaviour {
     public bool askResetLevel = false;//if true, the level will be reset
     public bool askResetBall = false;//if true, the ball position will be reset and the ball parameters will be set to the values of the player
     public bool generatorInitialised = false;//true if generators are initialised at the beginning of the level
+    public bool uiInitialisation = false;
     public bool levelEditorMode = false;//true in editor mode, false in play mode
     public bool justEnteredEditorMode = true;
     public static bool loadedFromEditor = false;//this is true when the user selected editor mode from menu and false when a created level is opened in play mode (which still opens "LevelEditor" scene)
