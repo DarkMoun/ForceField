@@ -815,6 +815,11 @@ public class SetEditorMode : FSystem {
                         acf.GetComponent<IsEditable>().isEditable = level.attractiveEditable[i];
                         ffg.GetComponent<FFNbLimit>().max = level.maxAttractive;
                         GameObjectManager.bind(acf);
+                        ForceField ff = acf.GetComponent<ForceField>();
+                        ff.initialSizeX = ff.sizex;
+                        ff.initialSizeY = ff.sizey;
+                        ff.initialValue = ff.value;
+                        ff.initialDirection = ff.direction;
                     }
                 }
                 else if (ffg.name == "RepulsiveCircleFieldGenerator")
@@ -832,6 +837,11 @@ public class SetEditorMode : FSystem {
                         rcf.GetComponent<IsEditable>().isEditable = level.repulsiveEditable[i];
                         ffg.GetComponent<FFNbLimit>().max = level.maxRepulsive;
                         GameObjectManager.bind(rcf);
+                        ForceField ff = rcf.GetComponent<ForceField>();
+                        ff.initialSizeX = ff.sizex;
+                        ff.initialSizeY = ff.sizey;
+                        ff.initialValue = ff.value;
+                        ff.initialDirection = ff.direction;
                     }
                 }
                 else if (ffg.name == "UniformFieldGenerator")
@@ -851,6 +861,11 @@ public class SetEditorMode : FSystem {
                         uf.GetComponent<IsEditable>().isEditable = level.uniformEditable[i];
                         ffg.GetComponent<FFNbLimit>().max = level.maxUniform;
                         GameObjectManager.bind(uf);
+                        ForceField ff = uf.GetComponent<ForceField>();
+                        ff.initialSizeX = ff.sizex;
+                        ff.initialSizeY = ff.sizey;
+                        ff.initialValue = ff.value;
+                        ff.initialDirection = ff.direction;
                     }
                 }
             }
@@ -862,6 +877,13 @@ public class SetEditorMode : FSystem {
             mv.direction = new Vector3(level.ballDirectionx, level.ballDirectiony, level.ballDirectionz);
             mv.speed = level.ballSpeed;
             movingGO.First().GetComponent<IsEditable>().isEditable = level.ballEditable;
+            mv.initialPostion = mv.gameObject.transform.position;
+            mv.initialSpeed = mv.speed;
+            mv.playerSpeed = mv.speed;
+            mv.initialDirection = mv.direction;
+            mv.playerDirection = mv.direction;
+
+            gi.askResetLevel = true;
 
             return true;
         }
