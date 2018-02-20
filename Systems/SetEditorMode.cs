@@ -54,13 +54,24 @@ public class SetEditorMode : FSystem {
 			if (go.name == "EditButton") {
 				go.GetComponent<Button> ().onClick.AddListener (ActivateEditorMode);
 			} else if (go.name == "TryButton") {
-				go.GetComponent<Button> ().onClick.AddListener (ActivatePlayMode);
+				go.GetComponent<Button> ().onClick.AddListener (CheckAlertTry);
 			} else if (go.name == "SaveButton") {
-				go.GetComponent<Button> ().onClick.AddListener (SaveLevel);
+				go.GetComponent<Button> ().onClick.AddListener (CheckAlertSave);
 			} else if (go.name == "ValidateButton") {
 				go.GetComponent<Button> ().onClick.AddListener (ValidateLevel);
-			}
-		}
+			}else if(go.name == "Continue")
+            {
+                go.GetComponent<Button>().onClick.AddListener(SaveOrTry);
+            }
+            else if (go.name == "Cancel")
+            {
+                go.GetComponent<Button>().onClick.AddListener(CancelAlert);
+            }else if( go.name == "ValidateSaved")
+            {
+                go.GetComponent<Button>().onClick.AddListener(HideLevelSaved);
+                HideLevelSaved();
+            }
+        }
 
         GameInfo gi = gameInfo.First().GetComponent<GameInfo>();
         if (!GameInfo.loadedFromEditor)
@@ -347,7 +358,61 @@ public class SetEditorMode : FSystem {
 		gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode = true;
 	}
 
-	void ActivatePlayMode()
+    void SaveOrTry()
+    {
+        foreach (Text t in gameInfo.First().GetComponent<GameInfo>().alertEditorMode.GetComponentsInChildren<Text>())
+        {
+            if (t.gameObject.transform.parent.gameObject.name == "Continue")
+            {
+                if(t.text == "Try Level")
+                {
+                    ActivatePlayMode();
+                }else if(t.text == "Save")
+                {
+                    SaveLevel();
+                }
+                gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(false);
+                break;
+            }
+        }
+    }
+
+    void CancelAlert()
+    {
+        gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(false);
+    }
+
+    void CheckAlertTry()
+    {
+        bool alert = false;
+        foreach(GameObject ff in forceFields)
+        {
+            if(ff.GetComponent<IsEditable>().isEditable && ff.GetComponent<Draggable>().canBeMovedOutOfEditor)
+            {
+                alert = true;
+                break;
+            }
+        }
+        if (!alert)
+        {
+            ActivatePlayMode();
+        }
+        else
+        {
+            gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(true);
+            foreach(Text t in gameInfo.First().GetComponent<GameInfo>().alertEditorMode.GetComponentsInChildren<Text>())
+            {
+                if(t.gameObject.transform.parent.gameObject.name == "Continue")
+                {
+                    t.text = "Try Level";
+                    break;
+                }
+            }
+        }
+    }
+
+
+    void ActivatePlayMode()
     {
         foreach (GameObject go in draggable)
         {
@@ -369,7 +434,37 @@ public class SetEditorMode : FSystem {
 		mv.initialSpeed = mv.speed;
 	}
 
-	void SaveLevel(){
+    void CheckAlertSave()
+    {
+        bool alert = false;
+        foreach (GameObject ff in forceFields)
+        {
+            if (ff.GetComponent<IsEditable>().isEditable && ff.GetComponent<Draggable>().canBeMovedOutOfEditor)
+            {
+                alert = true;
+                break;
+            }
+        }
+        if (!alert)
+        {
+            SaveLevel();
+        }
+        else
+        {
+            gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(true);
+            foreach (Text t in gameInfo.First().GetComponent<GameInfo>().alertEditorMode.GetComponentsInChildren<Text>())
+            {
+                if (t.gameObject.transform.parent.gameObject.name == "Continue")
+                {
+                    t.text = "Save";
+                    break;
+                }
+            }
+        }
+    }
+
+
+    void SaveLevel(){
         LevelData level = new LevelData();
         GameInfo gi = gameInfo.First().GetComponent<GameInfo>();
 
@@ -384,7 +479,7 @@ public class SetEditorMode : FSystem {
         foreach(Transform child in gi.gameObject.transform)
         {
             GameObject go = child.gameObject;
-            if(go.tag == "ForceField")
+            if(go.tag == "ForceField" && !(go.GetComponent<Draggable>().canBeMovedOutOfEditor && go.GetComponent<IsEditable>().isEditable))
             {
                 ForceField ff = go.GetComponent<ForceField>();
                 if(ff.ffType == 0)
@@ -482,7 +577,7 @@ public class SetEditorMode : FSystem {
         foreach (Transform child in gi.gameObject.transform)
         {
             GameObject go = child.gameObject;
-            if (go.tag == "ForceField")
+            if (go.tag == "ForceField" && !(go.GetComponent<Draggable>().canBeMovedOutOfEditor && go.GetComponent<IsEditable>().isEditable))
             {
                 ForceField ff = go.GetComponent<ForceField>();
                 if (ff.ffType == 0)
@@ -611,16 +706,23 @@ public class SetEditorMode : FSystem {
         {
             File.Create(Application.persistentDataPath + "/Level_Names.txt");
         }
-        File.AppendAllText(Application.persistentDataPath + "/Level_Names.txt", "Level_" + (nbLevel + 1));
+        File.AppendAllText(Application.persistentDataPath + "/Level_Names.txt", "\r\n"+"Level_" + (nbLevel + 1));
 
         //serialize and save level
         BinaryFormatter binary = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/Level_" + (nbLevel + 1) + ".dat");
         binary.Serialize(file, level);
         file.Close();
+
+        gameInfo.First().GetComponent<GameInfo>().levelSaved.SetActive(true);
     }
 
-	void ValidateLevel(){
+    void HideLevelSaved()
+    {
+        gameInfo.First().GetComponent<GameInfo>().levelSaved.SetActive(false);
+    }
+    
+    void ValidateLevel(){
 
 	}
 
@@ -646,6 +748,7 @@ public class SetEditorMode : FSystem {
                         t.transform.parent = gi.gameObject.transform;
                         t.transform.position = new Vector3(level.targetPosx[i], level.targetPosy[i], level.targetPosz[i]);
                         t.transform.localScale = new Vector3(level.targetScalex[i], level.targetScaley[i], level.targetScalez[i]);
+                        GameObjectManager.bind(t);
                     }
                 }else if (ffg.name == "CircleObstacleGenerator")
                 {
@@ -655,6 +758,7 @@ public class SetEditorMode : FSystem {
                         co.transform.parent = gi.gameObject.transform;
                         co.transform.position = new Vector3(level.circleObstaclePosx[i], level.circleObstaclePosy[i], level.circleObstaclePosz[i]);
                         co.transform.localScale = new Vector3(level.circleObstacleScalex[i], level.circleObstacleScaley[i], level.circleObstacleScalez[i]);
+                        GameObjectManager.bind(co);
                     }
                 }
                 else if (ffg.name == "SquareObstacleGenerator")
@@ -666,6 +770,7 @@ public class SetEditorMode : FSystem {
                         so.transform.position = new Vector3(level.squareObstaclePosx[i], level.squareObstaclePosy[i], level.squareObstaclePosz[i]);
                         so.transform.localScale = new Vector3(level.squareObstacleScalex[i], level.squareObstacleScaley[i], level.squareObstacleScalez[i]);
                         so.transform.rotation = new Quaternion(level.squareObstacleRotationx[i], level.squareObstacleRotationy[i], level.squareObstacleRotationz[i], level.squareObstacleRotationw[i]);
+                        GameObjectManager.bind(so);
                     }
                 }
                 else if (ffg.name == "AttractiveCircleFieldGenerator")
@@ -682,6 +787,7 @@ public class SetEditorMode : FSystem {
                         acf.GetComponent<Draggable>().isDraggable = level.attractiveDraggable[i];
                         acf.GetComponent<IsEditable>().isEditable = level.attractiveEditable[i];
                         ffg.GetComponent<FFNbLimit>().max = level.maxAttractive;
+                        GameObjectManager.bind(acf);
                     }
                 }
                 else if (ffg.name == "RepulsiveCircleFieldGenerator")
@@ -698,6 +804,7 @@ public class SetEditorMode : FSystem {
                         rcf.GetComponent<Draggable>().isDraggable = level.repulsiveDraggable[i];
                         rcf.GetComponent<IsEditable>().isEditable = level.repulsiveEditable[i];
                         ffg.GetComponent<FFNbLimit>().max = level.maxRepulsive;
+                        GameObjectManager.bind(rcf);
                     }
                 }
                 else if (ffg.name == "UniformFieldGenerator")
@@ -716,6 +823,7 @@ public class SetEditorMode : FSystem {
                         uf.GetComponent<Draggable>().isDraggable = level.uniformDraggable[i];
                         uf.GetComponent<IsEditable>().isEditable = level.uniformEditable[i];
                         ffg.GetComponent<FFNbLimit>().max = level.maxUniform;
+                        GameObjectManager.bind(uf);
                     }
                 }
             }

@@ -10,6 +10,8 @@ public class GameInfo : MonoBehaviour {
     public GameObject distanceInGame;
     public GameObject editorUI;//ui only visible in editor mode
     public GameObject gameButtons;//pause, play, reset, go to menu
+    public GameObject alertEditorMode;
+    public GameObject levelSaved;
 
     public bool gamePaused = true;
     public bool askResetLevel = false;//if true, the level will be reset
