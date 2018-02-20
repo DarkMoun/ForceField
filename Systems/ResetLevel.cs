@@ -39,7 +39,13 @@ public class ResetLevel : FSystem {
             ForceField ff = go.GetComponent<ForceField>();
             ff.initialSizeX = ff.sizex;
             ff.initialSizeY = ff.sizey;
-            ff.initialValue = ff.value;
+            if(ff.ffType == 0)
+            {
+                go.GetComponent<Mass>().initialValue = go.GetComponent<Mass>().value;
+            }else if (ff.ffType == 1 || ff.ffType == 2)
+            {
+                go.GetComponent<Charge>().initialValue = go.GetComponent<Charge>().value;
+            }
             ff.initialDirection = ff.direction;
         }
         Move mv = movingGO.First().GetComponent<Move>();
@@ -127,8 +133,15 @@ public class ResetLevel : FSystem {
 			ForceField ff = go.GetComponent<ForceField> ();
 			ff.sizex = ff.initialSizeX;
 			ff.sizey = ff.initialSizeY;
-			ff.value = ff.initialValue;
-			ff.direction = ff.initialDirection;
+            if (ff.ffType == 0)
+            {
+                go.GetComponent<Mass>().value = go.GetComponent<Mass>().initialValue;
+            }
+            else if (ff.ffType == 1 || ff.ffType == 2)
+            {
+                go.GetComponent<Charge>().value = go.GetComponent<Charge>().initialValue;
+            }
+            ff.direction = ff.initialDirection;
 		}
 	}
 }

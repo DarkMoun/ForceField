@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 114000014098366508}
   - component: {fileID: 114000011692922972}
   - component: {fileID: 114000011029830876}
+  - component: {fileID: 114162111319753026}
   m_Layer: 0
   m_Name: CircleRepulsiveForceField
   m_TagString: ForceField
@@ -286,7 +287,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69da0b3d808805f4f9d8093462626488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 0
+  value: 0
+  initialValue: 0
+  playerValue: 0
 --- !u!114 &114000014055259560
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -310,14 +313,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5abbf906d5b23404b878790f7acf246d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 500
   sizex: 7
   sizey: 7
-  initialValue: 0
   initialSizeX: 0
   initialSizeY: 0
   initialDirection: 0
-  modified: 1
   ffType: 1
   direction: 0
 --- !u!114 &114000014098366508
@@ -331,6 +331,20 @@ MonoBehaviour:
   m_Script: {fileID: -53623643, guid: cb9710c8caff81944ae116876bfe8b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114162111319753026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012790634488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf416aee1b9f05e4692830c2dc46d095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 500
+  initialValue: 500
+  playerValue: 0
 --- !u!136 &136000012607708568
 CapsuleCollider:
   m_ObjectHideFlags: 1

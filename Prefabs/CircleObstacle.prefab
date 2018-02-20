@@ -42,9 +42,8 @@ GameObject:
   - component: {fileID: 114000012074069600}
   - component: {fileID: 114000012622497030}
   - component: {fileID: 114000011340905506}
-  - component: {fileID: 114000010554070104}
   m_Layer: 0
-  m_Name: DraggableCircleObstacle
+  m_Name: CircleObstacle
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,24 +158,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010360894124}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114000010554070104
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000014238041046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 862eb3aa88e193745885b4cae8736277, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isDraggable: 1
-  dragged: 0
-  canBeMoved: 1
-  canBeMovedOutOfEditor: 0
-  initialPosition: {x: 0, y: 0, z: 0}
-  positionBeforeDrag: {x: 0, y: 0, z: 0}
-  fromMouseToCenter: {x: 0, y: 0, z: 0}
 --- !u!114 &114000011340905506
 MonoBehaviour:
   m_ObjectHideFlags: 1

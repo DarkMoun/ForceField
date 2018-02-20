@@ -445,8 +445,9 @@ public class SetEditorMode : FSystem {
 			ff.initialDirection = ff.direction;
 			ff.initialSizeX = ff.sizex;
 			ff.initialSizeY = ff.sizey;
-			ff.initialValue = ff.value;
-			go.GetComponent<Draggable> ().initialPosition = go.transform.position;
+			go.GetComponent<Mass>().initialValue = go.GetComponent<Mass>().value;
+            go.GetComponent<Charge>().initialValue = go.GetComponent<Charge>().value;
+            go.GetComponent<Draggable> ().initialPosition = go.transform.position;
 		}
 		Move mv = movingGO.First ().GetComponent<Move> ();
 		mv.initialDirection = mv.direction;
@@ -581,7 +582,6 @@ public class SetEditorMode : FSystem {
         level.uniformScaley = new float[level.nbUniform];
         level.uniformScalez = new float[level.nbUniform];
         level.uniformValue = new float[level.nbUniform];
-        level.uniformValue2 = new float[level.nbUniform];
         level.uniformSizeX = new float[level.nbUniform];
         level.uniformSizeY = new float[level.nbUniform];
         level.uniformDraggable = new bool[level.nbUniform];
@@ -608,7 +608,7 @@ public class SetEditorMode : FSystem {
                     level.attractiveScalex[countAttractive] = go.transform.localScale.x;
                     level.attractiveScaley[countAttractive] = go.transform.localScale.y;
                     level.attractiveScalez[countAttractive] = go.transform.localScale.z;
-                    level.attractiveValue[countAttractive] = ff.value;
+                    level.attractiveValue[countAttractive] = go.GetComponent<Mass>().value;
                     level.attractiveSize[countAttractive] = ff.sizex;
                     level.attractiveDraggable[countAttractive] = go.GetComponent<Draggable>().canBeMovedOutOfEditor;
                     level.attractiveEditable[countAttractive] = go.GetComponent<IsEditable>().isEditable;
@@ -622,7 +622,7 @@ public class SetEditorMode : FSystem {
                     level.repulsiveScalex[countRepulsive] = go.transform.localScale.x;
                     level.repulsiveScaley[countRepulsive] = go.transform.localScale.y;
                     level.repulsiveScalez[countRepulsive] = go.transform.localScale.z;
-                    level.repulsiveValue[countRepulsive] = ff.value;
+                    level.repulsiveValue[countRepulsive] = go.GetComponent<Charge>().value;
                     level.repulsiveSize[countRepulsive] = ff.sizex;
                     level.repulsiveDraggable[countRepulsive] = go.GetComponent<Draggable>().canBeMovedOutOfEditor;
                     level.repulsiveEditable[countRepulsive] = go.GetComponent<IsEditable>().isEditable;
@@ -640,8 +640,7 @@ public class SetEditorMode : FSystem {
                     level.uniformScalex[countUniform] = go.transform.localScale.x;
                     level.uniformScaley[countUniform] = go.transform.localScale.y;
                     level.uniformScalez[countUniform] = go.transform.localScale.z;
-                    level.uniformValue[countUniform] = ff.value;
-                    level.uniformValue2[countUniform] = ff.value2;
+                    level.uniformValue[countUniform] = go.GetComponent<Charge>().value;
                     level.uniformSizeX[countUniform] = ff.sizex;
                     level.uniformSizeY[countUniform] = ff.sizey;
                     level.uniformDraggable[countUniform] = go.GetComponent<Draggable>().canBeMovedOutOfEditor;
@@ -693,8 +692,8 @@ public class SetEditorMode : FSystem {
         level.ballPosx = mv.gameObject.transform.position.x;
         level.ballPosy = mv.gameObject.transform.position.y;
         level.ballPosz = mv.gameObject.transform.position.z;
-        level.ballMass = movingGO.First().GetComponent<Mass>().mass;
-        level.ballCharge = 0; //has to be done
+        level.ballMass = movingGO.First().GetComponent<Mass>().value;
+        level.ballCharge = movingGO.First().GetComponent<Charge>().value;
         level.ballDirectionx = mv.direction.x;
         level.ballDirectiony = mv.direction.y;
         level.ballDirectionz = mv.direction.z;
@@ -808,7 +807,7 @@ public class SetEditorMode : FSystem {
                         acf.transform.parent = gi.gameObject.transform;
                         acf.transform.position = new Vector3(level.attractivePosx[i], level.attractivePosy[i], level.attractivePosz[i]);
                         acf.transform.localScale = new Vector3(level.attractiveScalex[i], level.attractiveScaley[i], level.attractiveScalez[i]);
-                        acf.GetComponent<ForceField>().value = level.attractiveValue[i];
+                        acf.GetComponent<Mass>().value = level.attractiveValue[i];
                         acf.GetComponent<ForceField>().sizex = level.attractiveSize[i];
                         acf.GetComponent<ForceField>().sizey = level.attractiveSize[i];
                         acf.GetComponent<Draggable>().isDraggable = level.attractiveDraggable[i];
@@ -818,7 +817,7 @@ public class SetEditorMode : FSystem {
                         ForceField ff = acf.GetComponent<ForceField>();
                         ff.initialSizeX = ff.sizex;
                         ff.initialSizeY = ff.sizey;
-                        ff.initialValue = ff.value;
+                        acf.GetComponent<Mass>().initialValue = acf.GetComponent<Mass>().value;
                         ff.initialDirection = ff.direction;
                     }
                 }
@@ -830,7 +829,7 @@ public class SetEditorMode : FSystem {
                         rcf.transform.parent = gi.gameObject.transform;
                         rcf.transform.position = new Vector3(level.repulsivePosx[i], level.repulsivePosy[i], level.repulsivePosz[i]) ;
                         rcf.transform.localScale = new Vector3(level.repulsiveScalex[i], level.repulsiveScaley[i], level.repulsiveScalez[i]);
-                        rcf.GetComponent<ForceField>().value = level.repulsiveValue[i];
+                        rcf.GetComponent<Charge>().value = level.repulsiveValue[i];
                         rcf.GetComponent<ForceField>().sizex = level.repulsiveSize[i];
                         rcf.GetComponent<ForceField>().sizey = level.repulsiveSize[i];
                         rcf.GetComponent<Draggable>().isDraggable = level.repulsiveDraggable[i];
@@ -840,7 +839,7 @@ public class SetEditorMode : FSystem {
                         ForceField ff = rcf.GetComponent<ForceField>();
                         ff.initialSizeX = ff.sizex;
                         ff.initialSizeY = ff.sizey;
-                        ff.initialValue = ff.value;
+                        rcf.GetComponent<Charge>().initialValue = rcf.GetComponent<Charge>().value;
                         ff.initialDirection = ff.direction;
                     }
                 }
@@ -853,8 +852,7 @@ public class SetEditorMode : FSystem {
                         uf.transform.rotation = new Quaternion(level.uniformRotationx[i], level.uniformRotationy[i], level.uniformRotationz[i], level.uniformRotationw[i]);
                         uf.transform.position = new Vector3(level.uniformPosx[i], level.uniformPosy[i], level.uniformPosz[i]);
                         uf.transform.localScale = new Vector3(level.uniformScalex[i], level.uniformScaley[i], level.uniformScalez[i]);
-                        uf.GetComponent<ForceField>().value = level.uniformValue[i];
-                        uf.GetComponent<ForceField>().value2 = level.uniformValue2[i];
+                        uf.GetComponent<Charge>().value = level.uniformValue[i];
                         uf.GetComponent<ForceField>().sizex = level.uniformSizeX[i];
                         uf.GetComponent<ForceField>().sizey = level.uniformSizeY[i];
                         uf.GetComponent<Draggable>().isDraggable = level.uniformDraggable[i];
@@ -864,7 +862,7 @@ public class SetEditorMode : FSystem {
                         ForceField ff = uf.GetComponent<ForceField>();
                         ff.initialSizeX = ff.sizex;
                         ff.initialSizeY = ff.sizey;
-                        ff.initialValue = ff.value;
+                        uf.GetComponent<Charge>().initialValue = uf.GetComponent<Charge>().value;
                         ff.initialDirection = ff.direction;
                     }
                 }
@@ -872,16 +870,20 @@ public class SetEditorMode : FSystem {
 
             Move mv = movingGO.First().GetComponent<Move>();
             mv.gameObject.transform.position = new Vector3(level.ballPosx, level.ballPosy, level.ballPosz);
-            movingGO.First().GetComponent<Mass>().mass = level.ballMass;
-            //ball.charge = ?
+            movingGO.First().GetComponent<Mass>().value = level.ballMass;
+            movingGO.First().GetComponent<Charge>().value = level.ballCharge;
             mv.direction = new Vector3(level.ballDirectionx, level.ballDirectiony, level.ballDirectionz);
             mv.speed = level.ballSpeed;
             movingGO.First().GetComponent<IsEditable>().isEditable = level.ballEditable;
             mv.initialPostion = mv.gameObject.transform.position;
             mv.initialSpeed = mv.speed;
+            movingGO.First().GetComponent<Mass>().initialValue = movingGO.First().GetComponent<Mass>().value;
+            movingGO.First().GetComponent<Charge>().initialValue = movingGO.First().GetComponent<Charge>().value;
             mv.playerSpeed = mv.speed;
             mv.initialDirection = mv.direction;
             mv.playerDirection = mv.direction;
+            movingGO.First().GetComponent<Mass>().playerValue = movingGO.First().GetComponent<Mass>().value;
+            movingGO.First().GetComponent<Charge>().playerValue = movingGO.First().GetComponent<Charge>().value;
 
             gi.askResetLevel = true;
 
@@ -959,7 +961,6 @@ class LevelData{
     public float[] uniformScaley;
     public float[] uniformScalez;
     public float[] uniformValue;
-	public float[] uniformValue2;
 	public float[] uniformSizeX;
     public float[] uniformSizeY;
     public bool[] uniformDraggable;

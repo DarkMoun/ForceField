@@ -1,10 +1,11 @@
 
 A faire:
+	sauvegarder un niveau nécessite au moins une cible
 	intégration de TinCan/xAPI
 	système d'aide
 	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences)
-	sauvegarder la progression du joueur (niveaux effectués et compétences acquises)
-	gérer mass, charge
+	sauvegarder la progression du joueur (niveaux effectués et compétences acquises+pouvoir créer de nouvelles compétences)
+	créer l'interface permettant de changer la masse et la charge de la balle (et changer le nom de "value" dans l'interface en fonction du champ de force)
 	permettre de choisir les valeurs min max des ui (editor mode)
 	tutoriel
 	visualisation des champs de vecteurs
@@ -24,3 +25,8 @@ Fonctionnalités possibles:
 	ajouter obstacle changeant la charge de la balle
 	exporter et importer des niveaux
 	selection multiple + drag d'objet? (dans les deux modes de jeu)
+	rotation des champs de force uniform avec un drag plutot qu'un slider?
+
+Bug
+	si la balle touche une cible et un obstacle en meme temps
+	en cliquant consécutivement sur la balle et un force field l'ui d'un des deux ne disparait pas

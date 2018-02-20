@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 222000012518947334}
   - component: {fileID: 114000013464078092}
   - component: {fileID: 114000010608965820}
-  - component: {fileID: 114000014108784434}
+  - component: {fileID: 114460667831473138}
   m_Layer: 5
   m_Name: LevelButton
   m_TagString: LevelSelector
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114000014108784434
+--- !u!114 &114460667831473138
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -156,7 +156,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000010686328998}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c38f36e5e119d5a4a8f29a2d0e452754, type: 3}
+  m_Script: {fileID: 11500000, guid: bb755423df0291f40bd98436ebade0fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelID: 0

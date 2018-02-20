@@ -85,13 +85,26 @@ public class SetUIParameters : FSystem {
 								} else if (uiE.name == "SizeInputField") {
 									uiE.GetComponent<InputField> ().text = "" + go.GetComponent<ForceField> ().sizex;
 								} else if (uiE.name == "ValueSlider") {
-									if (go.GetComponent<ForceField> ().ffType == 0 || go.GetComponent<ForceField> ().ffType == 1) {
-										uiE.GetComponent<Slider> ().value = (go.GetComponent<ForceField> ().value - 1) / 999;
-									} else if (go.GetComponent<ForceField> ().ffType == 2) {
-										uiE.GetComponent<Slider> ().value = (go.GetComponent<ForceField> ().value - 1) / 99;
-									}
-								} else if (uiE.name == "ValueInputField") {
-									uiE.GetComponent<InputField> ().text = "" + go.GetComponent<ForceField> ().value;
+									if (go.GetComponent<ForceField> ().ffType == 0) {
+										uiE.GetComponent<Slider>().value = (go.GetComponent<Mass>().value - 1) / 999;
+									} else if (go.GetComponent<ForceField> ().ffType == 1)
+                                    {
+                                        uiE.GetComponent<Slider>().value = (go.GetComponent<Charge>().value - 1) / 999;
+                                    }
+                                    else if (go.GetComponent<ForceField>().ffType == 2)
+                                    {
+                                        uiE.GetComponent<Slider>().value = (go.GetComponent<Charge>().value - 1) / 99;
+                                    }
+                                } else if (uiE.name == "ValueInputField")
+                                {
+                                    if (go.GetComponent<ForceField>().ffType == 0)
+                                    {
+                                        uiE.GetComponent<InputField>().text = "" + go.GetComponent<Mass>().value;
+                                    }
+                                    else if (go.GetComponent<ForceField>().ffType == 1 || go.GetComponent<ForceField>().ffType == 2)
+                                    {
+                                        uiE.GetComponent<InputField>().text = "" + go.GetComponent<Charge>().value;
+                                    }
 								}
 							}
 							gameInfo.First ().GetComponent<GameInfo> ().uiParameters.SetActive (true);//show uiP
@@ -249,12 +262,17 @@ public class SetUIParameters : FSystem {
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected) {
                 //set the new value
-				if (go.GetComponent<ForceField> ().ffType == 0 || go.GetComponent<ForceField> ().ffType == 1) {
-					go.GetComponent<ForceField> ().value = value * 999 + 1;
-				} else if (go.GetComponent<ForceField> ().ffType == 2) {
-					go.GetComponent<ForceField> ().value = value * 99 + 1;
-				}
-				foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().uiParameters.transform) {
+				if (go.GetComponent<ForceField> ().ffType == 0) {
+					go.GetComponent<Mass> ().value = value * 999 + 1;
+				} else if (go.GetComponent<ForceField> ().ffType == 1)
+                {
+                    go.GetComponent<Charge>().value = value * 999 + 1;
+                }
+                else if (go.GetComponent<ForceField>().ffType == 2)
+                {
+                    go.GetComponent<Charge>().value = value * 99 + 1;
+                }
+                foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().uiParameters.transform) {
 					GameObject uiE = child.gameObject;
 					if (uiE.name == "ValueInputField") {
                         //set the input field to the new value
@@ -273,8 +291,21 @@ public class SetUIParameters : FSystem {
 		float f;
 		float.TryParse (value, out f);
 		foreach (GameObject go in selectable) {
-			if (go.GetComponent<Clickable> ().isSelected) {
-				go.GetComponent<ForceField> ().value = f;//set the new value
+			if (go.GetComponent<Clickable> ().isSelected)
+            {
+                //set the new value
+                if (go.GetComponent<ForceField>().ffType == 0)
+                {
+                    go.GetComponent<Mass>().value = f;
+                }
+                else if (go.GetComponent<ForceField>().ffType == 1)
+                {
+                    go.GetComponent<Charge>().value = f;
+                }
+                else if (go.GetComponent<ForceField>().ffType == 2)
+                {
+                    go.GetComponent<Charge>().value = f;
+                }
                 foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().uiParameters.transform) {
 					GameObject uiE = child.gameObject;
 					if (uiE.name == "ValueSlider") {
@@ -295,32 +326,6 @@ public class SetUIParameters : FSystem {
 		movingGO.First ().GetComponent<Move> ().playerDirection = movingGO.First ().GetComponent<Move> ().direction;//store the direction set by the player
 		movingGO.First ().GetComponent<Move> ().directionGO.transform.rotation = Quaternion.Euler(0,-(value-0.5f) * 360+90,0);//rotate the direction displayer
 	}
-
-	/*void XInputFieldChanged(string value){
-		float f;
-		float.TryParse (value, out f);
-		Move mv = movingGO.First ().GetComponent<Move> ();
-		mv.direction.x = f;
-		*foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().ballParameters.transform) {
-			GameObject uiE = child.gameObject;
-			if (uiE.name == "DirectionSlider") {
-				uiE.GetComponent<Slider> ().value = (float)(Math.Acos(mv.direction.x/mv.direction.magnitude)/(2*Math.PI) + 0.5);
-			}
-		}*
-	}
-
-	void YInputFieldChanged(string value){
-		float f;
-		float.TryParse (value, out f);
-		Move mv = movingGO.First ().GetComponent<Move> ();
-		mv.direction.z = f;
-		*foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().ballParameters.transform) {
-			GameObject uiE = child.gameObject;
-			if (uiE.name == "DirectionSlider") {
-				uiE.GetComponent<Slider> ().value = (float)(Math.Acos(mv.direction.x/mv.direction.magnitude)/(2*Math.PI) + 0.5);
-			}
-		}*
-	}*/
 
 	void SpeedSliderChanged(float value){
 		foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().ballParameters.transform) {

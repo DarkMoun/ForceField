@@ -63,6 +63,7 @@ GameObject:
   - component: {fileID: 114000011454245860}
   - component: {fileID: 114000013058399258}
   - component: {fileID: 114000012389321538}
+  - component: {fileID: 114738845105068852}
   m_Layer: 0
   m_Name: SquareUniformForceField
   m_TagString: ForceField
@@ -280,14 +281,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5abbf906d5b23404b878790f7acf246d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 50
   sizex: 7
   sizey: 7
-  initialValue: 0
   initialSizeX: 0
   initialSizeY: 0
   initialDirection: 0
-  modified: 1
   ffType: 2
   direction: 0
 --- !u!114 &114000012148736712
@@ -342,4 +340,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69da0b3d808805f4f9d8093462626488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 0
+  value: 0
+  initialValue: 0
+  playerValue: 0
+--- !u!114 &114738845105068852
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012914477158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf416aee1b9f05e4692830c2dc46d095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 50
+  initialValue: 50
+  playerValue: 0
