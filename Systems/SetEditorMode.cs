@@ -726,7 +726,14 @@ public class SetEditorMode : FSystem {
         {
             File.Create(Application.persistentDataPath + "/Level_Names.txt");
         }
-        File.AppendAllText(Application.persistentDataPath + "/Level_Names.txt", "\r\n"+"Level_" + (nbLevel + 1));
+        if(nbLevel == 0)
+        {
+            File.AppendAllText(Application.persistentDataPath + "/Level_Names.txt", "Level_" + (nbLevel + 1));
+        }
+        else
+        {
+            File.AppendAllText(Application.persistentDataPath + "/Level_Names.txt", "\r\n" + "Level_" + (nbLevel + 1));
+        }
 
         //serialize and save level
         BinaryFormatter binary = new BinaryFormatter();
