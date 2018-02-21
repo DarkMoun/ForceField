@@ -149,7 +149,8 @@ public class SetUIParameters : FSystem {
                                     }
                                 }
                             }
-							gameInfo.First ().GetComponent<GameInfo> ().uiParameters.SetActive (true);//show uiP
+                            gameInfo.First().GetComponent<GameInfo>().ballParameters.SetActive(false);//hide bP
+                            gameInfo.First ().GetComponent<GameInfo> ().uiParameters.SetActive (true);//show uiP
 							if (go.GetComponent<ForceField> ().ffType == 2) {
 								gameInfo.First ().GetComponent<GameInfo> ().uniformRotator.SetActive (true);//show ur
 								ur.GetComponentInChildren<Slider> ().value = (go.GetComponent<ForceField>().direction/360)+0.5f;
@@ -186,7 +187,8 @@ public class SetUIParameters : FSystem {
                                     uiE.GetComponent<InputField>().text = "" + go.GetComponent<Charge>().value;
                                 }
                             }
-							gameInfo.First ().GetComponent<GameInfo> ().ballParameters.SetActive (true);//show bP
+                            gameInfo.First().GetComponent<GameInfo>().uiParameters.SetActive(false);//hide uiP
+                            gameInfo.First ().GetComponent<GameInfo> ().ballParameters.SetActive (true);//show bP
 							mv.directionGO.SetActive(true);
 						}
 						if (gameInfo.First ().gameObject.GetComponent<GameInfo> ().levelEditorMode) {

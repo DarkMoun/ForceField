@@ -29,9 +29,8 @@ Fonctionnalités possibles:
 	Ajouter des champs de force attractifs electrostatique (et non gravitationnel)
 	Créer des champs mélangeant gravitation et électrostatique?
 	afficher les coordonnées du vecteur direction de la balle
+	passer toutes les variables de "GameInfo" en variable statique?
 
-Bug
-	si la balle touche une cible et un obstacle en meme temps
-	en cliquant consécutivement sur la balle et un force field l'ui d'un des deux ne disparait pas
+Bugs:
 	calculer l'accélération quand la masse de la balle est à 0
-	erreur de FYFY quand on reset alors que la balle trigger quelque chose
+	erreur de FYFY quand "on reset" alors que la balle trigger quelque chose
