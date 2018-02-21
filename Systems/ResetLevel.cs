@@ -100,7 +100,8 @@ public class ResetLevel : FSystem {
         //hide end game texts
 		gameInfo.First ().GetComponent<GameInfo> ().levelCleared = false;
 		gameInfo.First ().GetComponent<GameInfo> ().levelLost = false;
-		gameInfo.First ().GetComponent<GameInfo> ().gamePaused = true;
+        gameInfo.First().GetComponent<GameInfo>().triggered = false;
+        gameInfo.First ().GetComponent<GameInfo> ().gamePaused = true;
 	}
 
 	void resetAll(){

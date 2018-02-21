@@ -28,6 +28,7 @@ public class GameInfo : MonoBehaviour {
     public GameObject levelLostText;
     public bool levelCleared = false;
     public bool levelLost = false;
+    public bool triggered = false;
 
     public int selectedGO = 0;//number of selected gameobjects
 	public bool selectedChanged = true; //true when the selected object just changed
