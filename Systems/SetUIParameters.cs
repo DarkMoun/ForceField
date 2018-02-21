@@ -53,6 +53,22 @@ public class SetUIParameters : FSystem {
             {
                 uiE.GetComponent<InputField>().onValueChanged.AddListener(SpeedInputFieldChanged);
             }
+            else if (uiE.name == "MassSlider")
+            {
+                uiE.GetComponent<Slider>().onValueChanged.AddListener(MassSliderChanged);
+            }
+            else if (uiE.name == "MassInputField")
+            {
+                uiE.GetComponent<InputField>().onValueChanged.AddListener(MassInputFieldChanged);
+            }
+            else if (uiE.name == "ChargeSlider")
+            {
+                uiE.GetComponent<Slider>().onValueChanged.AddListener(ChargeSliderChanged);
+            }
+            else if (uiE.name == "ChargeInputField")
+            {
+                uiE.GetComponent<InputField>().onValueChanged.AddListener(ChargeInputFieldChanged);
+            }
         }
         ur.GetComponentInChildren<Slider>().onValueChanged.AddListener(UrSliderChanged);
     }
@@ -105,8 +121,34 @@ public class SetUIParameters : FSystem {
                                     {
                                         uiE.GetComponent<InputField>().text = "" + go.GetComponent<Charge>().value;
                                     }
-								}
-							}
+                                    foreach(Transform c in uiE.transform)
+                                    {
+                                        GameObject goc = c.gameObject;
+                                        if(goc.name == "Placeholder")
+                                        {
+                                            if (go.GetComponent<ForceField>().ffType == 0)
+                                            {
+                                                goc.GetComponent<Text>().text = "Mass";
+                                            }
+                                            else if (go.GetComponent<ForceField>().ffType == 1 || go.GetComponent<ForceField>().ffType == 2)
+                                            {
+                                                goc.GetComponent<Text>().text = "Charge";
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (uiE.name == "Value")
+                                {
+                                    if (go.GetComponent<ForceField>().ffType == 0)
+                                    {
+                                        uiE.GetComponent<Text>().text = "Mass:";
+                                    }
+                                    else if (go.GetComponent<ForceField>().ffType == 1 || go.GetComponent<ForceField>().ffType == 2)
+                                    {
+                                        uiE.GetComponent<Text>().text = "Charge:";
+                                    }
+                                }
+                            }
 							gameInfo.First ().GetComponent<GameInfo> ().uiParameters.SetActive (true);//show uiP
 							if (go.GetComponent<ForceField> ().ffType == 2) {
 								gameInfo.First ().GetComponent<GameInfo> ().uniformRotator.SetActive (true);//show ur
@@ -122,16 +164,28 @@ public class SetUIParameters : FSystem {
 									} else {
 										uiE.GetComponent<Slider> ().value = (float)(0.5-Math.Acos (mv.playerDirection.x / mv.playerDirection.magnitude) / (2 * Math.PI));
 									}
-								} /*else if (uiE.name == "DirectionXInputField") {
-									uiE.GetComponent<InputField> ().text = "" + mv.direction.x;
-								} else if (uiE.name == "DirectionYInputField") {
-									uiE.GetComponent<InputField> ().text = "" + mv.direction.z;
-								}*/ else if (uiE.name == "SpeedSlider") {
+								} else if (uiE.name == "SpeedSlider") {
 									uiE.GetComponent<Slider> ().value = (mv.speed)/100;
 								} else if (uiE.name == "SpeedInputField") {
 									uiE.GetComponent<InputField> ().text = "" + mv.speed;
-								}
-							}
+                                }
+                                else if (uiE.name == "MassSlider")
+                                {
+                                    uiE.GetComponent<Slider>().value = (go.GetComponent<Mass>().value) / 100;
+                                }
+                                else if (uiE.name == "MassInputField")
+                                {
+                                    uiE.GetComponent<InputField>().text = "" + go.GetComponent<Mass>().value;
+                                }
+                                else if (uiE.name == "ChargeSlider")
+                                {
+                                    uiE.GetComponent<Slider>().value = (go.GetComponent<Charge>().value) / 100;
+                                }
+                                else if (uiE.name == "ChargeInputField")
+                                {
+                                    uiE.GetComponent<InputField>().text = "" + go.GetComponent<Charge>().value;
+                                }
+                            }
 							gameInfo.First ().GetComponent<GameInfo> ().ballParameters.SetActive (true);//show bP
 							mv.directionGO.SetActive(true);
 						}
@@ -179,7 +233,7 @@ public class SetUIParameters : FSystem {
 						}
 					}
                     if(go.tag == "Object")
-                    {
+                    {//change ball direction with drag
                         if (movingGO.First().GetComponent<Move>().directionGO.GetComponentInChildren<PointerOver>() && Input.GetMouseButtonDown(0))
                         {
                             gameInfo.First().GetComponent<GameInfo>().ballDirectionChanging = true;
@@ -351,7 +405,67 @@ public class SetUIParameters : FSystem {
         movingGO.First ().GetComponent<Move> ().playerSpeed = f;//store the speed set by the player
     }
 
-	void UrSliderChanged(float value){//slider for uniform force field direction
+    void MassSliderChanged(float value)
+    {
+        foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().ballParameters.transform)
+        {
+            GameObject uiE = child.gameObject;
+            if (uiE.name == "MassInputField")
+            {
+                uiE.GetComponent<InputField>().text = "" + (value * 100);//set the input field to the new value
+            }
+        }
+        movingGO.First().GetComponent<Mass>().value = value * 100;//set the new mass
+        movingGO.First().GetComponent<Mass>().playerValue = value * 100;//store the mass set by the player
+    }
+
+    void MassInputFieldChanged(string value)
+    {
+        float f;
+        float.TryParse(value, out f);
+        foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().ballParameters.transform)
+        {
+            GameObject uiE = child.gameObject;
+            if (uiE.name == "MassSlider")
+            {
+                uiE.GetComponent<Slider>().value = (f) / 100;//set the slider to the new value
+            }
+        }
+        movingGO.First().GetComponent<Mass>().value = f;//set the new mass
+        movingGO.First().GetComponent<Mass>().playerValue = f;//store the mass set by the player
+    }
+
+    void ChargeSliderChanged(float value)
+    {
+        foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().ballParameters.transform)
+        {
+            GameObject uiE = child.gameObject;
+            if (uiE.name == "ChargeInputField")
+            {
+                uiE.GetComponent<InputField>().text = "" + (value * 100);//set the input field to the new value
+            }
+        }
+        movingGO.First().GetComponent<Charge>().value = value * 100;//set the new charge
+        movingGO.First().GetComponent<Charge>().playerValue = value * 100;//store the charge set by the player
+    }
+
+    void ChargeInputFieldChanged(string value)
+    {
+        float f;
+        float.TryParse(value, out f);
+        foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().ballParameters.transform)
+        {
+            GameObject uiE = child.gameObject;
+            if (uiE.name == "ChargeSlider")
+            {
+                uiE.GetComponent<Slider>().value = (f) / 100;//set the slider to the new value
+            }
+        }
+        movingGO.First().GetComponent<Charge>().value = f;//set the new charge
+        movingGO.First().GetComponent<Charge>().playerValue = f;//store the charge set by the player
+    }
+
+    void UrSliderChanged(float value){//slider for uniform force field direction
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected) {
 				go.GetComponent<ForceField> ().direction = (value-0.5f)*360;//set new direction

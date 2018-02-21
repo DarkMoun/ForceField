@@ -54,22 +54,22 @@ public class ApplyForce : FSystem {
             {//for attractive force fields
                 if (distance < minDist)
                 {//if the object is to close from the center 1/r² = 1/minDist²
-                    value = ff.GetComponent<Mass>().value* movingGO.First().GetComponent<Mass>().value/ (minDist * minDist);
+                    value = Mass.G * ff.GetComponent<Mass>().value / (minDist * minDist);
                 }
                 else
                 {
-                    value = ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (distance * distance);
+                    value = Mass.G * ff.GetComponent<Mass>().value / (distance * distance);
                 }
             }
             else if (ff.GetComponent<ForceField> ().ffType == 1)
             {//for repulsive force fields
                 if (distance < minDist)
                 {//if the object is to close from the center 1/r² = 1/minDist²
-                    value = ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (minDist * minDist) * 10 / 4*(float)Math.PI;
+                    value = Charge.K * ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (minDist * minDist) / movingGO.First().GetComponent<Mass>().value;
                 }
                 else
                 {
-                    value = ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (distance * distance) * 10 / 4 * (float)Math.PI;
+                    value = Charge.K * ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (distance * distance) / movingGO.First().GetComponent<Mass>().value;
                 }
                 value = -value;
             }
@@ -96,22 +96,22 @@ public class ApplyForce : FSystem {
             {//for attractive force fields
                 if (distance < minDist)
                 {//if the object is to close from the center 1/r² = 1/minDist²
-                    value = ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (minDist * minDist);
+                    value = Mass.G * ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (minDist * minDist);
                 }
                 else
                 {
-                    value = ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (distance * distance);
+                    value = Mass.G * ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (distance * distance);
                 }
             }
             else if (ff.GetComponent<ForceField>().ffType == 1)
             {//for repulsive force fields
                 if (distance < minDist)
                 {//if the object is to close from the center 1/r² = 1/minDist²
-                    value = ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (minDist * minDist) * 10 / 4 * (float)Math.PI;
+                    value = Charge.K * ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (minDist * minDist) / movingGO.First().GetComponent<Mass>().value;
                 }
                 else
                 {
-                    value = ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (distance * distance) * 10 / 4 * (float)Math.PI;
+                    value = Charge.K * ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (distance * distance) / movingGO.First().GetComponent<Mass>().value;
                 }
                 value = -value;
             }
@@ -124,22 +124,22 @@ public class ApplyForce : FSystem {
             {//for attractive force fields
                 if (distanceDT < minDist)
                 {//if the object is to close from the center 1/r² = 1/minDist²
-                    valueDT = ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (minDist * minDist);
+                    valueDT = Mass.G * ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (minDist * minDist);
                 }
                 else
                 {
-                    valueDT = ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (distanceDT * distanceDT);
+                    valueDT = Mass.G * ff.GetComponent<Mass>().value * movingGO.First().GetComponent<Mass>().value / (distanceDT * distanceDT);
                 }
             }
             else if (ff.GetComponent<ForceField>().ffType == 1)
             {//for repulsive force fields
                 if (distanceDT < minDist)
                 {//if the object is to close from the center 1/r² = 1/minDist²
-                    valueDT = ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (minDist * minDist) * 10 / 4 * (float)Math.PI;
+                    valueDT = Charge.K * ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (minDist * minDist) / movingGO.First().GetComponent<Mass>().value;
                 }
                 else
                 {
-                    valueDT = ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (distanceDT * distanceDT) * 10 / 4 * (float)Math.PI;
+                    valueDT = Charge.K * ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value / (distanceDT * distanceDT) / movingGO.First().GetComponent<Mass>().value;
                 }
                 valueDT = -valueDT;
             }
@@ -154,7 +154,7 @@ public class ApplyForce : FSystem {
 	void Uniform(GameObject ff, GameObject go, Move mv,int n){
 		Vector3 newPoint = go.transform.position;
 		for(int i = 0; i <n; i++){ //new position calculated every deltaTime/n
-			float value = ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value * 10 / 4 * (float)Math.PI;
+			float value = Charge.K * ff.GetComponent<Charge>().value * movingGO.First().GetComponent<Charge>().value;
 			float alpha = (float)(ff.GetComponent<ForceField> ().direction*Math.PI/180);//direction of the uniform force field
 			newPoint+= new Vector3((float)Math.Cos(alpha),0, (float)Math.Sin(alpha)) * value * Time.deltaTime/n;//Euler
         }

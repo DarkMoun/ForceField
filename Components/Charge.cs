@@ -5,4 +5,5 @@ public class Charge : MonoBehaviour {
     public float value = 0;
     public float initialValue = 0;
     public float playerValue = 0;
+    public static float K = 1;
 }
