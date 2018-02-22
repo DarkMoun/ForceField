@@ -9,6 +9,7 @@ public class DragObjects : FSystem {
 	private Family draggable = FamilyManager.getFamily(new AllOfComponents(typeof(Draggable), typeof(Clickable)));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
     private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
+    private Family undoredo = FamilyManager.getFamily(new AllOfComponents(typeof(UndoRedoValues)));
 
     protected override void onPause(int currentFrame) {
 	}
@@ -30,6 +31,19 @@ public class DragObjects : FSystem {
 					gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;//an object is dragged
 					go.GetComponent<Draggable> ().positionBeforeDrag = go.transform.position;//store the current go position as position before drag
 					go.GetComponent<Draggable> ().fromMouseToCenter = go.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));//vector from mouse position to screen center before drag (positions in the world)
+
+                    if (gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
+                    {
+                        undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(1);
+                        undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedGO.Push(go);
+                        undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedPositions.Push(go.transform.position);
+                    }
+                    else
+                    {
+                        undoredo.First().GetComponent<UndoRedoValues>().undoActionTypes.Push(1);
+                        undoredo.First().GetComponent<UndoRedoValues>().undoDraggedGO.Push(go);
+                        undoredo.First().GetComponent<UndoRedoValues>().undoDraggedPositions.Push(go.transform.position);
+                    }
                 }
 			}
 		}

@@ -8,7 +8,6 @@ public class GoToMenu : FSystem {
 	// Advice: avoid to update your families inside this function.
 
 	private Family buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)));
-	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
 
     public GoToMenu()
     {

@@ -11,6 +11,7 @@ public class DeleteObject : FSystem {
 	private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
 	private Family ffGenerator = FamilyManager.getFamily(new AnyOfTags("FFGenerator"));
 	private Family buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)));
+    private Family undoredo = FamilyManager.getFamily(new AllOfComponents(typeof(UndoRedoValues)));
 
     public DeleteObject()
     {
@@ -47,6 +48,67 @@ public class DeleteObject : FSystem {
 				}
 				go.GetComponent<Clickable> ().isSelected = false;//unselect the object
 				gameInfo.First ().GetComponent<GameInfo> ().selectedGO--;
+                UndoRedoValues ur = undoredo.First().GetComponent<UndoRedoValues>();
+                if (gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
+                {
+                    ur.editorUndoActionTypes.Push(2);
+                    if (go.tag == "ForceField")
+                    {
+                        ur.editorUndoDeletedDirections.Push(go.GetComponent<ForceField>().direction);
+                        ur.editorUndoDeletedPositions.Push(go.transform.position);
+                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizex);
+                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizey);
+                        ur.editorUndoDeletedTypes.Push(go.GetComponent<ForceField>().ffType);
+                        if (go.GetComponent<ForceField>().ffType == 0)
+                        {
+                            ur.editorUndoDeletedValues.Push(go.GetComponent<Mass>().value);
+                        }
+                        else if (go.GetComponent<ForceField>().ffType == 1 || go.GetComponent<ForceField>().ffType == 2)
+                        {
+                            ur.editorUndoDeletedValues.Push(go.GetComponent<Charge>().value);
+                        }
+                    }
+                    else
+                    {
+                        ur.editorUndoDeletedPositions.Push(go.transform.position);
+                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizex);
+                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizey);
+                        if(go.tag == "Target")
+                        {
+                            ur.editorUndoDeletedTypes.Push(-1);
+                        }
+                        else if (go.name.Contains("CircleObstacle"))
+                        {
+
+                            ur.editorUndoDeletedTypes.Push(-2);
+                        }
+                        else if (go.name.Contains("SquareObstacle"))
+                        {
+
+                            ur.editorUndoDeletedTypes.Push(-3);
+                        }
+                    }
+                }
+                else
+                {
+                    if (go.tag == "ForceField")
+                    {
+                        ur.undoActionTypes.Push(2);
+                        ur.undoDeletedDirections.Push(go.GetComponent<ForceField>().direction);
+                        ur.undoDeletedPositions.Push(go.transform.position);
+                        ur.undoDeletedSizes.Push(go.GetComponent<ForceField>().sizex);
+                        ur.undoDeletedSizes.Push(go.GetComponent<ForceField>().sizey);
+                        ur.undoDeletedTypes.Push(go.GetComponent<ForceField>().ffType);
+                        if (go.GetComponent<ForceField>().ffType == 0)
+                        {
+                            ur.undoDeletedValues.Push(go.GetComponent<Mass>().value);
+                        }
+                        else if (go.GetComponent<ForceField>().ffType == 1 || go.GetComponent<ForceField>().ffType == 2)
+                        {
+                            ur.undoDeletedValues.Push(go.GetComponent<Charge>().value);
+                        }
+                    }
+                }
 				GameObjectManager.unbind (go);//unbind to FYFY
                 GameObject.Destroy(go);
 			}

@@ -6,10 +6,11 @@ A faire:
 	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences)
 	sauvegarder la progression du joueur (niveaux effectués et compétences acquises+pouvoir créer de nouvelles compétences)
 	créer l'interface permettant de changer la masse et la charge de la balle (et changer le nom de "value" dans l'interface en fonction du champ de force)
-	permettre de choisir les valeurs min max des ui (editor mode)
+	permettre de choisir les valeurs min max des ui (editor mode) (changer les bornes des sliders [0;1]->[min;max])
 	tutoriel
 	visualisation des champs de vecteurs
 	validation de niveau avant la sauvegarde (et pouvoir sauvegarder des niveau non validé mais accessible qu'en editeur)
+	ajouter "content type" à chaque input field
 
 
 
@@ -18,7 +19,7 @@ Fonctionnalités possibles:
 	compter le nombre de force field utilisé par rapport au minimum requis dans le niveau
 	afficher le score à la fin d'un niveau
 	proposer un niveau suivant?
-	fonction undo/redo (mode jeu et mode editeur)
+	*fonction redo (mode jeu et mode editeur)
 	copier/coller des objet en editeur
 	intégration de l'outil de création d'un réseau de pétri
 	trail renderer? (afficher la trajectoire de la balle, trajectoire partielle ou dernière trajectoire de la balle)
@@ -30,7 +31,13 @@ Fonctionnalités possibles:
 	Créer des champs mélangeant gravitation et électrostatique?
 	afficher les coordonnées du vecteur direction de la balle
 	passer toutes les variables de "GameInfo" en variable statique?
+	empecher toute action lorsqu'on appuie sur play
+	laisser la possibilité de déplacer des champs de force pendant le déplacement de la balle?
+	peut-on undo après un "resetAll"?
 
 Bugs:
+	corriger fonction undo
 	calculer l'accélération quand la masse de la balle est à 0
 	erreur de FYFY quand "on reset" alors que la balle trigger quelque chose
+	(après avoir initialisé l'ui à la sélection, remodifier les valeurs de l'objet et du player avec les valeurs de l'ui (utile pour undo redo))
+	bloquer le size de l'ui rouge en mode editeur

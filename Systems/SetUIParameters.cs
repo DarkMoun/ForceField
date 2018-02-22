@@ -3,6 +3,7 @@ using FYFY;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
 using System;
+using System.Collections.Generic;
 
 public class SetUIParameters : FSystem {
 	// Use this to update member variables when system pause. 
@@ -11,6 +12,7 @@ public class SetUIParameters : FSystem {
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
 	private Family selectable = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
 	private Family movingGO = FamilyManager.getFamily(new AllOfComponents(typeof(Move)));
+    private Family undoredo = FamilyManager.getFamily(new AllOfComponents(typeof(UndoRedoValues)));
 
     public SetUIParameters()
     {
@@ -24,6 +26,7 @@ public class SetUIParameters : FSystem {
             if (uiE.name == "SizeSlider")
             {
                 uiE.GetComponent<Slider>().onValueChanged.AddListener(SizeSliderChanged);
+                //uiE.GetComponent<Slider>().handleRect.gameObject.
             }
             else if (uiE.name == "SizeInputField")
             {
@@ -154,7 +157,7 @@ public class SetUIParameters : FSystem {
 							if (go.GetComponent<ForceField> ().ffType == 2) {
 								gameInfo.First ().GetComponent<GameInfo> ().uniformRotator.SetActive (true);//show ur
 								ur.GetComponentInChildren<Slider> ().value = (go.GetComponent<ForceField>().direction/360)+0.5f;
-							}
+                            }
 						} else if (go.tag == "Object") {
 							Move mv = movingGO.First ().GetComponent<Move> ();
 							foreach (Transform child in bP.transform) {
@@ -165,9 +168,9 @@ public class SetUIParameters : FSystem {
 									} else {
 										uiE.GetComponent<Slider> ().value = (float)(0.5-Math.Acos (mv.playerDirection.x / mv.playerDirection.magnitude) / (2 * Math.PI));
 									}
-								} else if (uiE.name == "SpeedSlider") {
+                                } else if (uiE.name == "SpeedSlider") {
 									uiE.GetComponent<Slider> ().value = (mv.speed)/100;
-								} else if (uiE.name == "SpeedInputField") {
+                                } else if (uiE.name == "SpeedInputField") {
 									uiE.GetComponent<InputField> ().text = "" + mv.speed;
                                 }
                                 else if (uiE.name == "MassSlider")
@@ -257,6 +260,17 @@ public class SetUIParameters : FSystem {
                             }
                             if (Input.GetMouseButtonUp(0))
                             {
+                                foreach (Transform child in bP.transform)
+                                {
+                                    GameObject uiE = child.gameObject;
+                                    if (uiE.name == "DirectionSlider")
+                                    {
+                                        undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                                        undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallDirection;
+                                        undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                                        undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
+                                    }
+                                }
                                 gameInfo.First().GetComponent<GameInfo>().ballDirectionChanging = false;
                             }
                         }
@@ -290,13 +304,21 @@ public class SetUIParameters : FSystem {
 			if (uiE.name == "SizeInputField") {
 				uiE.GetComponent<InputField> ().text = ""+(value * 17 + 3);//set the input field to the new value
 			}
-		}
+            else if (uiE.name == "SizeSlider")
+            {
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderFFSize;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+            }
+        }
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected && go.GetComponent<IsEditable>().isEditable) {
 				go.transform.localScale = new Vector3 (value * 17 + 3, go.transform.localScale.y, value * 17 + 3);//set the new size
-			}
-		}
-	}
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+
+            }
+        }
+    }
 
 	void SizeInputFieldChanged(string value){
 		float f;
@@ -305,12 +327,17 @@ public class SetUIParameters : FSystem {
 			GameObject uiE = child.gameObject;
 			if (uiE.name == "SizeSlider") {
 				uiE.GetComponent<Slider> ().value = (f-3)/17;//set the slider to the new value
-			}
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderFFSize;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+            }
 		}
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected && go.GetComponent<IsEditable>().isEditable) {
 				go.transform.localScale = new Vector3 (f, go.transform.localScale.y, f);//set the new size
-			}
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+
+            }
 		}
 	}
 
@@ -337,8 +364,15 @@ public class SetUIParameters : FSystem {
 						} else if (go.GetComponent<ForceField> ().ffType == 2) {
 							uiE.GetComponent<InputField> ().text = "" + (value * 99 + 1);
 						}
-					}
-				}
+                    }
+                    else if (uiE.name == "ValueSlider")
+                    {
+                        undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                        undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderFFValue;
+                        undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                        undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                    }
+                }
 			}
 		}
 	}
@@ -370,8 +404,12 @@ public class SetUIParameters : FSystem {
 							uiE.GetComponent<Slider> ().value = (f - 1) / 999;
 						} else if (go.GetComponent<ForceField> ().ffType == 2) {
 							uiE.GetComponent<Slider> ().value = (f - 1) / 99;
-						}
-					}
+                        }
+                        undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                        undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderFFValue;
+                        undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                        undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                    }
 				}
 			}
 		}
@@ -381,7 +419,18 @@ public class SetUIParameters : FSystem {
 		movingGO.First ().GetComponent<Move> ().direction = new Vector3 ((float)Math.Cos ((value-0.5) * 2*Math.PI), 0, (float)Math.Sin ((value-0.5) * 2*Math.PI));//set the new direction
 		movingGO.First ().GetComponent<Move> ().playerDirection = movingGO.First ().GetComponent<Move> ().direction;//store the direction set by the player
 		movingGO.First ().GetComponent<Move> ().directionGO.transform.rotation = Quaternion.Euler(0,-(value-0.5f) * 360+90,0);//rotate the direction displayer
-	}
+        foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().ballParameters.transform)
+        {
+            GameObject uiE = child.gameObject;
+            if (uiE.name == "DirectionSlider")
+            {
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallDirection;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
+            }
+        }
+    }
 
 	void SpeedSliderChanged(float value){
 		foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().ballParameters.transform) {
@@ -389,10 +438,17 @@ public class SetUIParameters : FSystem {
 			if (uiE.name == "SpeedInputField") {
 				uiE.GetComponent<InputField> ().text = ""+(value * 100);//set the input field to the new value
             }
-		}
+            else if (uiE.name == "SpeedSlider")
+            {
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallSpeed;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
+            }
+        }
 		movingGO.First ().GetComponent<Move> ().speed = value *100;//set the new speed
 		movingGO.First ().GetComponent<Move> ().playerSpeed = value * 100;//store the speed set by the player
-	}
+    }
 
 	void SpeedInputFieldChanged(string value){
 		float f;
@@ -401,6 +457,10 @@ public class SetUIParameters : FSystem {
 			GameObject uiE = child.gameObject;
 			if (uiE.name == "SpeedSlider") {
 				uiE.GetComponent<Slider> ().value = (f)/100;//set the slider to the new value
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallSpeed;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
             }
 		}
 		movingGO.First ().GetComponent<Move> ().speed = f;//set the new speed
@@ -415,6 +475,13 @@ public class SetUIParameters : FSystem {
             if (uiE.name == "MassInputField")
             {
                 uiE.GetComponent<InputField>().text = "" + (value * 100);//set the input field to the new value
+            }
+            else if (uiE.name == "MassSlider")
+            {
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallMass;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
             }
         }
         movingGO.First().GetComponent<Mass>().value = value * 100;//set the new mass
@@ -431,6 +498,10 @@ public class SetUIParameters : FSystem {
             if (uiE.name == "MassSlider")
             {
                 uiE.GetComponent<Slider>().value = (f) / 100;//set the slider to the new value
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallMass;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
             }
         }
         movingGO.First().GetComponent<Mass>().value = f;//set the new mass
@@ -445,6 +516,13 @@ public class SetUIParameters : FSystem {
             if (uiE.name == "ChargeInputField")
             {
                 uiE.GetComponent<InputField>().text = "" + (value * 100);//set the input field to the new value
+            }
+            else if (uiE.name == "ChargeSlider")
+            {
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallCharge;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
             }
         }
         movingGO.First().GetComponent<Charge>().value = value * 100;//set the new charge
@@ -461,6 +539,10 @@ public class SetUIParameters : FSystem {
             if (uiE.name == "ChargeSlider")
             {
                 uiE.GetComponent<Slider>().value = (f) / 100;//set the slider to the new value
+                undoredo.First().GetComponent<UndoRedoValues>().slider = uiE.GetComponent<Slider>();
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderBallCharge;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First();
             }
         }
         movingGO.First().GetComponent<Charge>().value = f;//set the new charge
@@ -469,13 +551,18 @@ public class SetUIParameters : FSystem {
 
     void UrSliderChanged(float value){//slider for uniform force field direction
 		foreach (GameObject go in selectable) {
-			if (go.GetComponent<Clickable> ().isSelected) {
-				go.GetComponent<ForceField> ().direction = (value-0.5f)*360;//set new direction
+			if (go.GetComponent<Clickable> ().isSelected)
+            {
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                go.GetComponent<ForceField> ().direction = (value-0.5f)*360;//set new direction
                 if (go.GetComponent<ForceField>())
                 {
                     go.transform.rotation = Quaternion.Euler(0, -(go.GetComponent<ForceField>().direction - 0.5f) + 180, 0);//rotate the force field
                 }
             }
-		}
-	}
+        }
+        undoredo.First().GetComponent<UndoRedoValues>().slider = gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponentInChildren<Slider>();
+        undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderFFDirection;
+        undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+    }
 }

@@ -124,11 +124,6 @@ public class ResetLevel : FSystem {
 				GameObject.Destroy (ff);
 			}
 		}
-		/*foreach (GameObject go in draggable) {
-			if (go.tag != "Obstacle") {
-				go.transform.position = go.GetComponent<Draggable> ().initialPosition;
-			}
-		}*/
         //set force fields values to their initial values in the level
 		foreach (GameObject go in forceFields) {
 			ForceField ff = go.GetComponent<ForceField> ();
@@ -144,5 +139,6 @@ public class ResetLevel : FSystem {
             }
             ff.direction = ff.initialDirection;
 		}
-	}
+        gameInfo.First().GetComponent<GameInfo>().askClearPlayUndo = true;
+    }
 }

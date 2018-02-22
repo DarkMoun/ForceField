@@ -9,7 +9,25 @@ public class GenerateFF : FSystem {
 
 	private Family ffGenerator = FamilyManager.getFamily(new AnyOfTags("FFGenerator"));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
-    private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
+    private Family undoredo = FamilyManager.getFamily(new AllOfComponents(typeof(UndoRedoValues)));
+
+    public GenerateFF()
+    {
+        foreach (GameObject ffg in ffGenerator)
+        {
+            if (ffg.name == "AttractiveCircleFieldGenerator"){
+                ffg.GetComponentInChildren<InputField>().onEndEdit.AddListener(MaxA);
+            }
+            else if (ffg.name == "RepulsiveCircleFieldGenerator")
+            {
+                ffg.GetComponentInChildren<InputField>().onEndEdit.AddListener(MaxR);
+            }
+            else if (ffg.name == "UniformFieldGenerator")
+            {
+                ffg.GetComponentInChildren<InputField>().onEndEdit.AddListener(MaxU);
+            }
+        }
+    }
 
     protected override void onPause(int currentFrame) {
 	}
@@ -20,8 +38,19 @@ public class GenerateFF : FSystem {
 	}
 
 	// Use to process your families.
-	protected override void onProcess(int familiesUpdateCount) {
-		if (!gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode) {
+	protected override void onProcess(int familiesUpdateCount)
+    {
+        foreach (GameObject ffg in ffGenerator)
+        {
+            if ((ffg.name == "AttractiveCircleFieldGenerator" || ffg.name == "RepulsiveCircleFieldGenerator" || ffg.name == "UniformFieldGenerator") && gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
+            {//if the generator is a force field generator and onclick "max" inputfield
+                if(ffg.GetComponentInChildren<InputField>().gameObject.GetComponent<PointerOver>() && Input.GetMouseButton(0) && !gameInfo.First().GetComponent<GameInfo>().objectDragged)
+                {
+                    int.TryParse(ffg.GetComponentInChildren<InputField>().text, out undoredo.First().GetComponent<UndoRedoValues>().maxValue);
+                }
+            }
+        }
+        if (!gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode) {
 			if (!gameInfo.First ().GetComponent<GameInfo> ().generatorInitialised) {
                 //initialize force fields generators
 				foreach (GameObject ffg in ffGenerator) {
@@ -59,6 +88,8 @@ public class GenerateFF : FSystem {
 					gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;
 					ff.GetComponent<Draggable> ().positionBeforeDrag = ff.transform.position;
 					ff.GetComponent<Draggable> ().fromMouseToCenter = ff.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));
+                    undoredo.First().GetComponent<UndoRedoValues>().undoActionTypes.Push(3);
+                    undoredo.First().GetComponent<UndoRedoValues>().undoCreatedGO.Push(ff);
                     limiter.available--;
 				}
 			}
@@ -67,7 +98,6 @@ public class GenerateFF : FSystem {
 				foreach (Transform child in generator.transform) {
 					if (child.gameObject.name == "Max") {
 						child.gameObject.SetActive (true);//show the input field modifying the max in editor mode
-
                     }
 				}
                 //initialize generators
@@ -95,8 +125,46 @@ public class GenerateFF : FSystem {
                     gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;
 					ff.GetComponent<Draggable> ().positionBeforeDrag = ff.transform.position;
 					ff.GetComponent<Draggable> ().fromMouseToCenter = ff.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));
+                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(3);
+                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoCreatedGO.Push(ff);
                 }
 			}
 		}
 	}
+
+    public void MaxA(string value)
+    {
+        int v;
+        int.TryParse(value, out v);
+        if(v != undoredo.First().GetComponent<UndoRedoValues>().maxValue)
+        {
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(4);
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoGeneratorTypes.Push(0);
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoGeneratorMax.Push(undoredo.First().GetComponent<UndoRedoValues>().maxValue);
+        }
+    }
+
+    public void MaxR(string value)
+    {
+        int v;
+        int.TryParse(value, out v);
+        if (v != undoredo.First().GetComponent<UndoRedoValues>().maxValue)
+        {
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(4);
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoGeneratorTypes.Push(1);
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoGeneratorMax.Push(undoredo.First().GetComponent<UndoRedoValues>().maxValue);
+        }
+    }
+
+    public void MaxU(string value)
+    {
+        int v;
+        int.TryParse(value, out v);
+        if (v != undoredo.First().GetComponent<UndoRedoValues>().maxValue)
+        {
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(4);
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoGeneratorTypes.Push(2);
+            undoredo.First().GetComponent<UndoRedoValues>().editorUndoGeneratorMax.Push(undoredo.First().GetComponent<UndoRedoValues>().maxValue);
+        }
+    }
 }
