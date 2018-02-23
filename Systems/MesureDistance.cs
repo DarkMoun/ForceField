@@ -23,7 +23,7 @@ public class MesureDistance : FSystem {
 		GameObject distanceDisplayer = gameInfo.First ().GetComponent<GameInfo> ().distanceDisplayer;//UI
         GameObject dig = gameInfo.First().GetComponent<GameInfo>().distanceInGame;
         //if 2 objects are selected
-        if (gameInfo.First ().gameObject.GetComponent<GameInfo> ().selectedGO == 2) {//if 2 go are selected
+        if (gameInfo.First().gameObject.GetComponent<GameInfo>().selectedGO == 2 && gameInfo.First ().gameObject.GetComponent<GameInfo> ().nbSelectableGO == 2) {//if 2 go are selected
 			GameObject g1 = null;
 			GameObject g2 = null;
 			foreach (GameObject go in clickableGO) { //get selected objects

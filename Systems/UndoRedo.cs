@@ -18,8 +18,10 @@ public class UndoRedo : FSystem
     {
         UndoRedoValues ur = undoredo.First().GetComponent<UndoRedoValues>();
 
-        ur.focusedObject = new Stack<GameObject>();
-        ur.editorFocusedObject = new Stack<GameObject>();
+        ur.focusedObject = new Stack<int>();
+        ur.editorFocusedObject = new Stack<int>();
+        ur.undoDeletedIDs = new Stack<int>();
+        ur.editorUndoDeletedIDs = new Stack<int>();
 
         //values for undo in play mode
         ur.undoActionTypes = new Stack<int>();
@@ -32,7 +34,7 @@ public class UndoRedo : FSystem
         ur.undoDeletedDirections = new Stack<float>();
         ur.undoDeletedSizes = new Stack<float>();
         ur.undoDeletedValues = new Stack<float>();
-        ur.undoCreatedGO = new Stack<GameObject>();
+        ur.undoCreatedGO = new Stack<int>();
 
         //values for undo in editor mode
         ur.editorUndoActionTypes = new Stack<int>();
@@ -45,7 +47,7 @@ public class UndoRedo : FSystem
         ur.editorUndoDeletedDirections = new Stack<float>();
         ur.editorUndoDeletedSizes = new Stack<float>();
         ur.editorUndoDeletedValues = new Stack<float>();
-        ur.editorUndoCreatedGO = new Stack<GameObject>();
+        ur.editorUndoCreatedGO = new Stack<int>();
         ur.editorUndoGeneratorTypes = new Stack<int>();
         ur.editorUndoGeneratorMax = new Stack<int>();
         ur.editorUndoToggles = new Stack<Toggle>();
@@ -69,7 +71,12 @@ public class UndoRedo : FSystem
         }
 
         editorMode = gameInfo.First().GetComponent<GameInfo>().levelEditorMode;
+        ur.inputfieldChanged = false;
         ur.theObjectIsSelected = false;
+        ur.goCreated = false;
+        ur.draggedAtCreation = false;
+        ur.undoing = false;
+        ur.idCount = 1;
     }
 
 	// Use this to update member variables when system pause. 
@@ -86,26 +93,49 @@ public class UndoRedo : FSystem
 	protected override void onProcess(int familiesUpdateCount)
     {
         UndoRedoValues ur = undoredo.First().GetComponent<UndoRedoValues>();
+
+        /*int a = -1;
+        int ae = -1;
+        if(ur.undoActionTypes.Count != 0)
+        {
+            a = ur.undoActionTypes.Peek();
+        }
+        if (ur.editorUndoActionTypes.Count != 0)
+        {
+            ae = ur.editorUndoActionTypes.Peek();
+        }
+        Debug.Log("Count: " + ur.undoActionTypes.Count + ": " + a + "   " + "CountE: " + ur.editorUndoActionTypes.Count + ": " + ae);*/
+
         if (!editorMode && gameInfo.First().GetComponent<GameInfo>().levelEditorMode || gameInfo.First().GetComponent<GameInfo>().askClearPlayUndo)
         {
             ClearPlayUndo();
             gameInfo.First().GetComponent<GameInfo>().askClearPlayUndo = false;
         }
 
-        if(Input.GetMouseButtonUp(0) && gameInfo.First().GetComponent<GameInfo>().selectedGO == 1 && ASliderValueIsDifferent() && !gameInfo.First().GetComponent<GameInfo>().selectedChanged)
+        if (Input.GetMouseButtonDown(0))
         {
-            sliderPushDone = false;
+            ur.selectionChanged = gameInfo.First().GetComponent<GameInfo>().selectedChanged;
         }
-        
-        if(ur.sliderValueChanged)
+
+        if (!ur.undoing)
         {
+            if ((Input.GetMouseButtonUp(0) || ur.inputfieldChanged) && gameInfo.First().GetComponent<GameInfo>().selectedGO == 1 && ASliderValueIsDifferent() && !ur.selectionChanged && !undoredo.First().GetComponent<UndoRedoValues>().goCreated)
+            {
+                sliderPushDone = false;
+                ur.inputfieldChanged = false;
+            }
             if (editorMode)
             {
                 if (!sliderPushDone)
                 {
                     ur.editorUndoActionTypes.Push(0);
                     ur.editorUndoSliders.Push(ur.slider);
+                    if(ur.sliderValue2 != -1)
+                    {
+                        ur.editorUndoSliders.Push(ur.slider2);
+                    }
                     ur.editorUndoSliderValues.Push(ur.sliderValue);
+                    ur.editorUndoSliderValues.Push(ur.sliderValue2);
                     ur.editorFocusedObject.Push(ur.sliderGO);
                     sliderPushDone = true;
                 }
@@ -127,8 +157,8 @@ public class UndoRedo : FSystem
         {
             SaveSliderValuesOnSelect();
         }
-
-        ur.sliderValueChanged = false;
+        
+        ur.undoing = false;
         editorMode = gameInfo.First().GetComponent<GameInfo>().levelEditorMode;
     }
 
@@ -175,17 +205,16 @@ public class UndoRedo : FSystem
                 if(s.gameObject.name == "SizeXSlider")
                 {
                     ur.sliderESizeX = s.value;
+                    ur.sliderESizeB = s.value;
                 }
                 else if (s.gameObject.name == "SizeYSlider")
                 {
                     ur.sliderESizeY = s.value;
-                }
-                else if (s.gameObject.name == "SizeBSlider")
-                {
-                    ur.sliderESizeB = s.value;
+                    ur.sliderESizeB2 = s.value;
                 }
             }
         }
+        ur.selectionChanged = false;
     }
 
     public bool ASliderValueIsDifferent()
@@ -262,13 +291,6 @@ public class UndoRedo : FSystem
                         return true;
                     }
                 }
-                else if (s.gameObject.name == "SizeBSlider")
-                {
-                    if(ur.sliderESizeB != s.value)
-                    {
-                        return true;
-                    }
-                }
             }
         }
         return false;
@@ -295,18 +317,32 @@ public class UndoRedo : FSystem
     public void Undo()
     {
         UndoRedoValues ur = undoredo.First().GetComponent<UndoRedoValues>();
-        if (ur.theObjectIsSelected || (editorMode && ur.editorUndoActionTypes.Peek() != 0 && ur.editorUndoActionTypes.Peek() != 5) || (!editorMode && ur.editorUndoActionTypes.Peek() != 0))
+        ur.undoing = true;
+
+        if ((ur.editorUndoActionTypes.Count != 0 && editorMode) || (ur.undoActionTypes.Count != 0 && !editorMode))
         {
-            if (editorMode)
+            if (ur.theObjectIsSelected || (editorMode && ur.editorUndoActionTypes.Peek() != 0 && ur.editorUndoActionTypes.Peek() != 5) || (!editorMode && ur.editorUndoActionTypes.Peek() != 0))
             {
-                if (ur.editorUndoActionTypes.Count != 0)
+                if (editorMode)
                 {
                     int action = ur.editorUndoActionTypes.Pop();
                     switch (action)
                     {
                         case 0:
-                            Slider s = ur.editorUndoSliders.Pop();
-                            s.value = ur.editorUndoSliderValues.Pop();
+                            float v2 = ur.editorUndoSliderValues.Pop();
+                            float v = ur.editorUndoSliderValues.Pop();
+                            if(v2 == -1)
+                            {
+                                Slider s = ur.editorUndoSliders.Pop();
+                                s.value = v;
+                            }
+                            else
+                            {
+                                Slider s2 = ur.editorUndoSliders.Pop();
+                                Slider s = ur.editorUndoSliders.Pop();
+                                s2.value = v2;
+                                s.value = v;
+                            }
                             break;
 
                         case 1:
@@ -316,6 +352,7 @@ public class UndoRedo : FSystem
 
                         case 2:
                             int type = ur.editorUndoDeletedTypes.Pop();
+                            int id = ur.editorUndoDeletedIDs.Pop();
                             switch (type)
                             {
                                 case -3:
@@ -339,6 +376,9 @@ public class UndoRedo : FSystem
                                             float sx = ur.editorUndoDeletedSizes.Pop();
                                             ff.transform.localScale = new Vector3(sy, ff.transform.localScale.y, sx);
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChangedEM = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                         }
                                     }
                                     break;
@@ -364,6 +404,9 @@ public class UndoRedo : FSystem
                                             float sx = ur.editorUndoDeletedSizes.Pop();
                                             ff.transform.localScale = new Vector3(sy, ff.transform.localScale.y, sx);
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChangedEM = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                         }
                                     }
                                     break;
@@ -389,6 +432,9 @@ public class UndoRedo : FSystem
                                             float sx = ur.editorUndoDeletedSizes.Pop();
                                             ff.transform.localScale = new Vector3(sy, ff.transform.localScale.y, sx);
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChangedEM = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                         }
                                     }
                                     break;
@@ -414,6 +460,9 @@ public class UndoRedo : FSystem
                                             ff.GetComponent<ForceField>().sizex = ur.editorUndoDeletedSizes.Pop();
                                             ff.GetComponent<Mass>().value = ur.editorUndoDeletedValues.Pop();
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChangedEM = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                         }
                                     }
                                     break;
@@ -439,6 +488,9 @@ public class UndoRedo : FSystem
                                             ff.GetComponent<ForceField>().sizex = ur.editorUndoDeletedSizes.Pop();
                                             ff.GetComponent<Charge>().value = ur.editorUndoDeletedValues.Pop();
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChangedEM = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                         }
                                     }
                                     break;
@@ -465,6 +517,9 @@ public class UndoRedo : FSystem
                                             ff.GetComponent<ForceField>().direction = ur.editorUndoDeletedDirections.Pop();
                                             ff.GetComponent<Charge>().value = ur.editorUndoDeletedValues.Pop();
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChangedEM = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                         }
                                     }
                                     break;
@@ -475,7 +530,16 @@ public class UndoRedo : FSystem
                             break;
 
                         case 3:
-                            GameObject goCreated = ur.editorUndoCreatedGO.Pop();
+                            int idCreated= ur.editorUndoCreatedGO.Pop();
+                            GameObject goCreated = null;
+                            foreach(GameObject go in clickableGO)
+                            {
+                                if(go.GetComponent<IDUndoRedo>().id == idCreated)
+                                {
+                                    goCreated = go;
+                                    break;
+                                }
+                            }
                             GameObjectManager.unbind(goCreated);
                             GameObject.Destroy(goCreated);
                             break;
@@ -486,7 +550,7 @@ public class UndoRedo : FSystem
                             {
                                 if (generator.GetComponent<FFNbLimit>().ffType == gtype)
                                 {
-                                    generator.GetComponent<FFNbLimit>().max = ur.editorUndoGeneratorMax.Pop();
+                                    generator.GetComponentInChildren<InputField>().text = ""+ur.editorUndoGeneratorMax.Pop();
                                 }
                             }
                             break;
@@ -500,10 +564,7 @@ public class UndoRedo : FSystem
                             break;
                     }
                 }
-            }
-            else
-            {
-                if (ur.undoActionTypes.Count != 0)
+                else
                 {
                     int action = ur.undoActionTypes.Pop();
                     switch (action)
@@ -520,6 +581,7 @@ public class UndoRedo : FSystem
 
                         case 2:
                             int type = ur.undoDeletedTypes.Pop();
+                            int id = ur.undoDeletedIDs.Pop();
                             switch (type)
                             {
                                 case 0:
@@ -543,6 +605,8 @@ public class UndoRedo : FSystem
                                             ff.GetComponent<ForceField>().sizex = ur.undoDeletedSizes.Pop();
                                             ff.GetComponent<Mass>().value = ur.undoDeletedValues.Pop();
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                             generator.GetComponent<FFNbLimit>().available--;
                                         }
                                     }
@@ -569,6 +633,8 @@ public class UndoRedo : FSystem
                                             ff.GetComponent<ForceField>().sizex = ur.undoDeletedSizes.Pop();
                                             ff.GetComponent<Charge>().value = ur.undoDeletedValues.Pop();
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                             generator.GetComponent<FFNbLimit>().available--;
                                         }
                                     }
@@ -596,6 +662,8 @@ public class UndoRedo : FSystem
                                             ff.GetComponent<ForceField>().direction = ur.undoDeletedDirections.Pop();
                                             ff.GetComponent<Charge>().value = ur.undoDeletedValues.Pop();
                                             ff.GetComponent<Clickable>().isSelected = true;
+                                            gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                                            ff.GetComponent<IDUndoRedo>().id = id;
                                             generator.GetComponent<FFNbLimit>().available--;
                                         }
                                     }
@@ -607,7 +675,16 @@ public class UndoRedo : FSystem
                             break;
 
                         case 3:
-                            GameObject goCreated = ur.undoCreatedGO.Pop();
+                            int idCreated = ur.undoCreatedGO.Pop();
+                            GameObject goCreated = null;
+                            foreach (GameObject go in clickableGO)
+                            {
+                                if (go.GetComponent<IDUndoRedo>().id == idCreated)
+                                {
+                                    goCreated = go;
+                                    break;
+                                }
+                            }
                             foreach (GameObject generator in ffGenerator)
                             {
                                 if (generator.GetComponent<FFNbLimit>().ffType == goCreated.GetComponent<ForceField>().ffType)
@@ -623,31 +700,35 @@ public class UndoRedo : FSystem
                             break;
                     }
                 }
-            }
-            ur.theObjectIsSelected = false;
-        }
-        else
-        {
-            GameObject go = null;
-            if (editorMode)
-            {
-                go = ur.editorFocusedObject.Pop();
+                ur.theObjectIsSelected = false;
             }
             else
             {
-                go = ur.focusedObject.Pop();
-            }
-            foreach (GameObject g in clickableGO)
-            {
-                //unselect all objects
-                if (g.GetComponent<Clickable>().isSelected)
+                int goID = -1;
+                if (editorMode)
                 {
-                    g.GetComponent<Clickable>().isSelected = false;
+                    goID = ur.editorFocusedObject.Pop();
                 }
+                else
+                {
+                    goID = ur.focusedObject.Pop();
+                }
+                foreach (GameObject g in clickableGO)
+                {
+                    //unselect all objects different to goID
+                    if(g.GetComponent<IDUndoRedo>().id == goID)
+                    {
+                        g.GetComponent<Clickable>().isSelected = true;
+                        gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                    }
+                    else if (g.GetComponent<Clickable>().isSelected)
+                    {
+                        g.GetComponent<Clickable>().isSelected = false;
+                    }
+                }
+                ur.theObjectIsSelected = true;
+                Undo();
             }
-            go.GetComponent<Clickable>().isSelected = true;
-            ur.theObjectIsSelected = true;
-            Undo();
         }
     }
 }

@@ -71,8 +71,8 @@ public class DeleteObject : FSystem {
                     else
                     {
                         ur.editorUndoDeletedPositions.Push(go.transform.position);
-                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizex);
-                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizey);
+                        ur.editorUndoDeletedSizes.Push(go.transform.localScale.z);
+                        ur.editorUndoDeletedSizes.Push(go.transform.localScale.x);
                         if(go.tag == "Target")
                         {
                             ur.editorUndoDeletedTypes.Push(-1);
@@ -88,6 +88,7 @@ public class DeleteObject : FSystem {
                             ur.editorUndoDeletedTypes.Push(-3);
                         }
                     }
+                    ur.editorUndoDeletedIDs.Push(go.GetComponent<IDUndoRedo>().id);
                 }
                 else
                 {
@@ -107,6 +108,7 @@ public class DeleteObject : FSystem {
                         {
                             ur.undoDeletedValues.Push(go.GetComponent<Charge>().value);
                         }
+                        ur.undoDeletedIDs.Push(go.GetComponent<IDUndoRedo>().id);
                     }
                 }
 				GameObjectManager.unbind (go);//unbind to FYFY

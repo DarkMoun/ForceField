@@ -64,6 +64,7 @@ GameObject:
   - component: {fileID: 114000013058399258}
   - component: {fileID: 114000012389321538}
   - component: {fileID: 114738845105068852}
+  - component: {fileID: 114756405164609172}
   m_Layer: 0
   m_Name: SquareUniformForceField
   m_TagString: ForceField
@@ -103,7 +104,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012914477158}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0.27, y: 0.5, z: -7.59}
   m_LocalScale: {x: 7, y: 0.1, z: 7}
   m_Children:
@@ -111,7 +112,7 @@ Transform:
   - {fileID: 4000013198860788}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!23 &23000010918128062
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -357,3 +358,15 @@ MonoBehaviour:
   value: 50
   initialValue: 50
   playerValue: 0
+--- !u!114 &114756405164609172
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012914477158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6364f8a6ae9130846a7d0a2a95fad48d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0

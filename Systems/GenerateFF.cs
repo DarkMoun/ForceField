@@ -10,6 +10,7 @@ public class GenerateFF : FSystem {
 	private Family ffGenerator = FamilyManager.getFamily(new AnyOfTags("FFGenerator"));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
     private Family undoredo = FamilyManager.getFamily(new AllOfComponents(typeof(UndoRedoValues)));
+    private Family clickableGO = FamilyManager.getFamily(new AllOfComponents(typeof(Clickable), typeof(PointerSensitive)));
 
     public GenerateFF()
     {
@@ -78,18 +79,30 @@ public class GenerateFF : FSystem {
 					ff.transform.SetParent (gameInfo.First ().transform);
 					GameObjectManager.bind (ff);//bind to FYFY
 					ff.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));//set position to mouse position
-                    if (ff.GetComponent<ForceField>().ffType == 2)
-                    {
-                        ff.transform.Rotate(0, 180, 0);
-                    }
                     ff.GetComponent<Draggable> ().dragged = true;//when created the force field is in "dragged" state
+                    if (gameInfo.First().GetComponent<GameInfo>().selectedGO == gameInfo.First().GetComponent<GameInfo>().nbSelectableGO)
+                    {
+                        foreach (GameObject g in clickableGO)
+                        {
+                            //unselect all objects
+                            if (g.GetComponent<Clickable>().isSelected)
+                            {
+                                g.GetComponent<Clickable>().isSelected = false;
+                            }
+                        }
+                    }
                     ff.GetComponent<Clickable>().isSelected = true;
+                    gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
                     //drag parameters
-					gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;
+                    gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;
 					ff.GetComponent<Draggable> ().positionBeforeDrag = ff.transform.position;
 					ff.GetComponent<Draggable> ().fromMouseToCenter = ff.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));
+                    ff.GetComponent<IDUndoRedo>().id = undoredo.First().GetComponent<UndoRedoValues>().idCount;
+                    undoredo.First().GetComponent<UndoRedoValues>().idCount++;
                     undoredo.First().GetComponent<UndoRedoValues>().undoActionTypes.Push(3);
-                    undoredo.First().GetComponent<UndoRedoValues>().undoCreatedGO.Push(ff);
+                    undoredo.First().GetComponent<UndoRedoValues>().undoCreatedGO.Push(ff.GetComponent<IDUndoRedo>().id);
+                    undoredo.First().GetComponent<UndoRedoValues>().goCreated = true;
+                    undoredo.First().GetComponent<UndoRedoValues>().draggedAtCreation = true;
                     limiter.available--;
 				}
 			}
@@ -113,20 +126,31 @@ public class GenerateFF : FSystem {
 					ff.transform.SetParent (gameInfo.First ().transform);
 					GameObjectManager.bind (ff);//bind to FYFY
 					ff.transform.position = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));//set position to mouse position
-                    if (ff.GetComponent<ForceField>()){
-                        if(ff.GetComponent<ForceField>().ffType == 2)
+					ff.GetComponent<Draggable> ().dragged = true;//when created the object is in "dragged" state
+                    if (gameInfo.First().GetComponent<GameInfo>().selectedGO == gameInfo.First().GetComponent<GameInfo>().nbSelectableGO)
+                    {
+                        foreach (GameObject g in clickableGO)
                         {
-                            ff.transform.Rotate(0, 180, 0);
+                            //unselect all objects
+                            if (g.GetComponent<Clickable>().isSelected)
+                            {
+                                g.GetComponent<Clickable>().isSelected = false;
+                            }
                         }
                     }
-					ff.GetComponent<Draggable> ().dragged = true;//when created the object is in "dragged" state
                     ff.GetComponent<Clickable>().isSelected = true;
+                    gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
+                    gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChangedEM = true;
                     //drag parameters
                     gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;
 					ff.GetComponent<Draggable> ().positionBeforeDrag = ff.transform.position;
 					ff.GetComponent<Draggable> ().fromMouseToCenter = ff.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));
+                    ff.GetComponent<IDUndoRedo>().id = undoredo.First().GetComponent<UndoRedoValues>().idCount;
+                    undoredo.First().GetComponent<UndoRedoValues>().idCount++;
                     undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(3);
-                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoCreatedGO.Push(ff);
+                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoCreatedGO.Push(ff.GetComponent<IDUndoRedo>().id);
+                    undoredo.First().GetComponent<UndoRedoValues>().goCreated = true;
+                    undoredo.First().GetComponent<UndoRedoValues>().draggedAtCreation = true;
                 }
 			}
 		}

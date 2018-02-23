@@ -35,11 +35,14 @@ public class SetEditorMode : FSystem {
 		foreach (InputField i in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<InputField>()) {
 			if (i.gameObject.name == "SizeXInputField") {
 				i.onValueChanged.AddListener (XInputField);
-			} else if (i.gameObject.name == "SizeYInputField") {
+                i.onEndEdit.AddListener(InputFieldValueChanged);
+            } else if (i.gameObject.name == "SizeYInputField") {
 				i.onValueChanged.AddListener (YInputField);
-			} else if (i.gameObject.name == "SizeBInputField") {
+                i.onEndEdit.AddListener(InputFieldValueChanged);
+            } else if (i.gameObject.name == "SizeBInputField") {
 				i.onValueChanged.AddListener (BInputField);
-			}
+                i.onEndEdit.AddListener(InputFieldValueChanged);
+            }
 		}
 		foreach (Toggle t in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Toggle>()) {
 			if (t.gameObject.name == "Editable") {
@@ -148,7 +151,7 @@ public class SetEditorMode : FSystem {
 				gameInfo.First ().GetComponent<GameInfo> ().justEnteredEditorMode = false;
 				gameInfo.First ().GetComponent<GameInfo> ().generatorInitialised = false;
 			}
-			if (gameInfo.First ().GetComponent<GameInfo> ().selectedGO == 1 && gameInfo.First ().gameObject.GetComponent<GameInfo> ().selectedChangedEM) {//if only one object is selected
+			if (gameInfo.First ().GetComponent<GameInfo> ().selectedGO == 1 && gameInfo.First ().GetComponent<GameInfo> ().selectedChangedEM) {//if only one object is selected
                 gameInfo.First().GetComponent<GameInfo>().uiInitialisation = true;
 				foreach (GameObject go in selectable) {
 					if (go.GetComponent<Clickable> ().isSelected) {
@@ -265,7 +268,7 @@ public class SetEditorMode : FSystem {
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected) {
 				go.transform.localScale = new Vector3 (go.transform.localScale.x, go.transform.localScale.y, value* 29+1);
-                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go.GetComponent<IDUndoRedo>().id;
 
             }
         }
@@ -275,7 +278,7 @@ public class SetEditorMode : FSystem {
             {
                 undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
                 undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeX;
-                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue2 = -1;
             }
         }
     }
@@ -289,7 +292,7 @@ public class SetEditorMode : FSystem {
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected) {
 				go.transform.localScale = new Vector3 (value* 29+1, go.transform.localScale.y, go.transform.localScale.z);
-                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go.GetComponent<IDUndoRedo>().id;
             }
         }
         foreach (Slider s in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Slider>())
@@ -298,7 +301,7 @@ public class SetEditorMode : FSystem {
             {
                 undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
                 undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeY;
-                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue2 = -1;
             }
         }
     }
@@ -319,16 +322,23 @@ public class SetEditorMode : FSystem {
                 if (go.GetComponent<Clickable>().isSelected)
                 {
                     go.transform.localScale = new Vector3(value * 29 + 1, go.transform.localScale.y, value * 29 + 1);
-                    undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                    undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go.GetComponent<IDUndoRedo>().id;
                 }
             }
             foreach (Slider s in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Slider>())
             {
                 if (s.gameObject.name == "SizeBSlider")
                 {
-                    undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
                     undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeB;
-                    undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                    undoredo.First().GetComponent<UndoRedoValues>().sliderValue2 = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeB2;
+                }
+                else if (s.gameObject.name == "SizeXSlider")
+                {
+                    undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
+                }
+                else if (s.gameObject.name == "SizeYSlider")
+                {
+                    undoredo.First().GetComponent<UndoRedoValues>().slider2 = s.GetComponent<Slider>();
                 }
             }
         }
@@ -342,16 +352,16 @@ public class SetEditorMode : FSystem {
 				s.value = (v -1)/ 29;
                 undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
                 undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeX;
-                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue2 = -1;
             }
 		}
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected) {
 				go.transform.localScale = new Vector3 (go.transform.localScale.x, go.transform.localScale.y, float.Parse(value));
-                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go.GetComponent<IDUndoRedo>().id;
             }
-		}
-	}
+        }
+    }
 
 	void YInputField(string value){
 		foreach (Slider s in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Slider>()) {
@@ -361,16 +371,16 @@ public class SetEditorMode : FSystem {
 				s.value = (v -1)/ 29;
                 undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
                 undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeY;
-                undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderValue2 = -1;
             }
 		}
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Clickable> ().isSelected) {
 				go.transform.localScale = new Vector3 (float.Parse(value), go.transform.localScale.y, go.transform.localScale.z);
-                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go.GetComponent<IDUndoRedo>().id;
             }
-		}
-	}
+        }
+    }
 
 	void BInputField(string value){
         if (!gameInfo.First().GetComponent<GameInfo>().uiInitialisation)
@@ -384,9 +394,16 @@ public class SetEditorMode : FSystem {
                     s.value = (v - 1) / 29;
                     if(s.gameObject.name == "SizeBSlider")
                     {
-                        undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
                         undoredo.First().GetComponent<UndoRedoValues>().sliderValue = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeB;
-                        undoredo.First().GetComponent<UndoRedoValues>().sliderValueChanged = true;
+                        undoredo.First().GetComponent<UndoRedoValues>().sliderValue2 = undoredo.First().GetComponent<UndoRedoValues>().sliderESizeB2;
+                    }
+                    else if (s.gameObject.name == "SizeXSlider")
+                    {
+                        undoredo.First().GetComponent<UndoRedoValues>().slider = s.GetComponent<Slider>();
+                    }
+                    else if (s.gameObject.name == "SizeYSlider")
+                    {
+                        undoredo.First().GetComponent<UndoRedoValues>().slider2 = s.GetComponent<Slider>();
                     }
                 }
             }
@@ -397,7 +414,7 @@ public class SetEditorMode : FSystem {
                     float v;
                     float.TryParse(value, out v);
                     go.transform.localScale = new Vector3(v, go.transform.localScale.y, v);
-                    undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go;
+                    undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go.GetComponent<IDUndoRedo>().id;
                 }
             }
         }
@@ -407,16 +424,21 @@ public class SetEditorMode : FSystem {
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<IsEditable> () && go.GetComponent<Clickable>().isSelected) {
 				go.GetComponent<IsEditable>().isEditable = value;
-                undoredo.First().GetComponent<UndoRedoValues>().editorFocusedObject.Push(go);
-
+                if (!undoredo.First().GetComponent<UndoRedoValues>().undoing && !undoredo.First().GetComponent<UndoRedoValues>().selectionChanged)
+                {
+                    undoredo.First().GetComponent<UndoRedoValues>().editorFocusedObject.Push(go.GetComponent<IDUndoRedo>().id);
+                }
             }
         }
-        foreach (Toggle t in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Toggle>())
+        if (!undoredo.First().GetComponent<UndoRedoValues>().undoing && !undoredo.First().GetComponent<UndoRedoValues>().selectionChanged)
         {
-            if (t.gameObject.name == "Editable")
+            foreach (Toggle t in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Toggle>())
             {
-                undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(5);
-                undoredo.First().GetComponent<UndoRedoValues>().editorUndoToggles.Push(t);
+                if (t.gameObject.name == "Editable")
+                {
+                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(5);
+                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoToggles.Push(t);
+                }
             }
         }
     }
@@ -425,20 +447,35 @@ public class SetEditorMode : FSystem {
 		foreach (GameObject go in selectable) {
 			if (go.GetComponent<Draggable> () && go.GetComponent<Clickable>().isSelected) {
 				go.GetComponent<Draggable>().canBeMovedOutOfEditor = value;
-                undoredo.First().GetComponent<UndoRedoValues>().editorFocusedObject.Push(go);
+                if (!undoredo.First().GetComponent<UndoRedoValues>().goCreated && !undoredo.First().GetComponent<UndoRedoValues>().undoing && !undoredo.First().GetComponent<UndoRedoValues>().selectionChanged)
+                {
+                    undoredo.First().GetComponent<UndoRedoValues>().editorFocusedObject.Push(go.GetComponent<IDUndoRedo>().id);
+                }
             }
         }
-        foreach (Toggle t in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Toggle>())
+        if (!undoredo.First().GetComponent<UndoRedoValues>().goCreated && !undoredo.First().GetComponent<UndoRedoValues>().undoing && !undoredo.First().GetComponent<UndoRedoValues>().selectionChanged)
         {
-            if (t.gameObject.name == "Draggable")
+            foreach (Toggle t in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Toggle>())
             {
-                undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(5);
-                undoredo.First().GetComponent<UndoRedoValues>().editorUndoToggles.Push(t);
+                if (t.gameObject.name == "Draggable")
+                {
+                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(5);
+                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoToggles.Push(t);
+                }
             }
+        }
+        else
+        {
+            undoredo.First().GetComponent<UndoRedoValues>().goCreated = false;
         }
     }
 
-	void ActivateEditorMode(){
+    void InputFieldValueChanged(string value)
+    {
+        undoredo.First().GetComponent<UndoRedoValues>().inputfieldChanged = true;
+    }
+
+    void ActivateEditorMode(){
 		gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode = true;
 	}
 

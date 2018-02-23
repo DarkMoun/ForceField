@@ -31,19 +31,6 @@ public class DragObjects : FSystem {
 					gameInfo.First ().GetComponent<GameInfo> ().objectDragged = true;//an object is dragged
 					go.GetComponent<Draggable> ().positionBeforeDrag = go.transform.position;//store the current go position as position before drag
 					go.GetComponent<Draggable> ().fromMouseToCenter = go.transform.position - Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y - 0.5f));//vector from mouse position to screen center before drag (positions in the world)
-
-                    if (gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
-                    {
-                        undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(1);
-                        undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedGO.Push(go);
-                        undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedPositions.Push(go.transform.position);
-                    }
-                    else
-                    {
-                        undoredo.First().GetComponent<UndoRedoValues>().undoActionTypes.Push(1);
-                        undoredo.First().GetComponent<UndoRedoValues>().undoDraggedGO.Push(go);
-                        undoredo.First().GetComponent<UndoRedoValues>().undoDraggedPositions.Push(go.transform.position);
-                    }
                 }
 			}
 		}
@@ -68,7 +55,27 @@ public class DragObjects : FSystem {
                              * the drag and the current position of the mouse is bigger than a certain value
                              * this way the object won't be dragged with a miss click */
 							d.canBeMoved = true;
-						}
+
+                            if (undoredo.First().GetComponent<UndoRedoValues>().draggedAtCreation)
+                            {
+                                undoredo.First().GetComponent<UndoRedoValues>().draggedAtCreation = false;
+                            }
+                            else
+                            {
+                                if (gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
+                                {
+                                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(1);
+                                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedGO.Push(go);
+                                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedPositions.Push(go.transform.position);
+                                }
+                                else
+                                {
+                                    undoredo.First().GetComponent<UndoRedoValues>().undoActionTypes.Push(1);
+                                    undoredo.First().GetComponent<UndoRedoValues>().undoDraggedGO.Push(go);
+                                    undoredo.First().GetComponent<UndoRedoValues>().undoDraggedPositions.Push(go.transform.position);
+                                }
+                            }
+                        }
 					}
 					if (d.canBeMoved) {
 						go.transform.position = newPos;//move the object to the new position

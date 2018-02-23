@@ -14,9 +14,11 @@ public class UndoRedoValues : MonoBehaviour {
      * 5 - a toggle value was changed
      */
 
-    public Stack<GameObject> focusedObject;
-    public Stack<GameObject> editorFocusedObject;
+    public Stack<int> focusedObject;
+    public Stack<int> editorFocusedObject;
     public bool theObjectIsSelected;
+    public int idCount;
+    public bool selectionChanged;
 
     //values for undo in play mode
     public Stack<int> undoActionTypes;
@@ -25,11 +27,12 @@ public class UndoRedoValues : MonoBehaviour {
     public Stack<GameObject> undoDraggedGO;
     public Stack<Vector3> undoDraggedPositions;
     public Stack<int> undoDeletedTypes;//ff types for ff
+    public Stack<int> undoDeletedIDs;
     public Stack<Vector3> undoDeletedPositions;
     public Stack<float> undoDeletedDirections;
     public Stack<float> undoDeletedSizes;
     public Stack<float> undoDeletedValues;
-    public Stack<GameObject> undoCreatedGO;
+    public Stack<int> undoCreatedGO;
 
     //values for undo in editor mode
     public Stack<int> editorUndoActionTypes;
@@ -38,18 +41,22 @@ public class UndoRedoValues : MonoBehaviour {
     public Stack<GameObject> editorUndoDraggedGO;
     public Stack<Vector3> editorUndoDraggedPositions;
     public Stack<int> editorUndoDeletedTypes;//ff types for ff, -1 for target, -2 for circle obstacle, -3 for square obstacle
+    public Stack<int> editorUndoDeletedIDs;
     public Stack<Vector3> editorUndoDeletedPositions;
     public Stack<float> editorUndoDeletedDirections;
     public Stack<float> editorUndoDeletedSizes;
     public Stack<float> editorUndoDeletedValues;
-    public Stack<GameObject> editorUndoCreatedGO;
+    public Stack<int> editorUndoCreatedGO;
     public Stack<int> editorUndoGeneratorTypes;
     public Stack<int> editorUndoGeneratorMax;
     public Stack<Toggle> editorUndoToggles;
 
+    public bool undoing;
+    public bool inputfieldChanged;
     public Slider slider;
+    public Slider slider2;
     public float sliderValue;
-    public bool sliderValueChanged;
+    public float sliderValue2;
     public float sliderFFSize;
     public float sliderFFValue;
     public float sliderFFDirection;
@@ -60,6 +67,9 @@ public class UndoRedoValues : MonoBehaviour {
     public float sliderESizeX;
     public float sliderESizeY;
     public float sliderESizeB;
-    public GameObject sliderGO;
+    public float sliderESizeB2;
+    public int sliderGO;
+    public bool draggedAtCreation;
+    public bool goCreated;
     public int maxValue;
 }

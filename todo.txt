@@ -36,8 +36,7 @@ Fonctionnalités possibles:
 	peut-on undo après un "resetAll"?
 
 Bugs:
-	corriger fonction undo
+	size (ui rouge)
 	calculer l'accélération quand la masse de la balle est à 0
 	erreur de FYFY quand "on reset" alors que la balle trigger quelque chose
-	(après avoir initialisé l'ui à la sélection, remodifier les valeurs de l'objet et du player avec les valeurs de l'ui (utile pour undo redo))
-	bloquer le size de l'ui rouge en mode editeur
+	// /*(après avoir initialisé l'ui à la sélection, remodifier les valeurs de l'objet et du player avec les valeurs de l'ui (utile pour undo redo))*/ //je sais plus pourquoi

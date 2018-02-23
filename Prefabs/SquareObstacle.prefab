@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114000013022004094}
   - component: {fileID: 114000012947338024}
   - component: {fileID: 114000012256949978}
+  - component: {fileID: 114839382963269700}
   m_Layer: 0
   m_Name: SquareObstacle
   m_TagString: Obstacle
@@ -204,3 +205,15 @@ MonoBehaviour:
   m_Script: {fileID: 1034401219, guid: c023b8bbf316f0946aa13671d4e0d6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114839382963269700
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011499814490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6364f8a6ae9130846a7d0a2a95fad48d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0

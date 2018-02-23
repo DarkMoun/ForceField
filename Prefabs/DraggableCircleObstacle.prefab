@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 114000012622497030}
   - component: {fileID: 114000011340905506}
   - component: {fileID: 114000010554070104}
+  - component: {fileID: 114690250619959374}
   m_Layer: 0
   m_Name: DraggableCircleObstacle
   m_TagString: Obstacle
@@ -211,6 +212,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
+--- !u!114 &114690250619959374
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014238041046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6364f8a6ae9130846a7d0a2a95fad48d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
 --- !u!136 &136000010508905976
 CapsuleCollider:
   m_ObjectHideFlags: 1
