@@ -37,8 +37,8 @@ public class ResetLevel : FSystem {
         foreach (GameObject go in forceFields)
         {
             ForceField ff = go.GetComponent<ForceField>();
-            ff.initialSizeX = ff.sizex;
-            ff.initialSizeY = ff.sizey;
+            ff.initialSizeX = ff.transform.localScale.z;
+            ff.initialSizeY = ff.transform.localScale.x;
             if(ff.ffType == 0)
             {
                 go.GetComponent<Mass>().initialValue = go.GetComponent<Mass>().value;
@@ -127,8 +127,7 @@ public class ResetLevel : FSystem {
         //set force fields values to their initial values in the level
 		foreach (GameObject go in forceFields) {
 			ForceField ff = go.GetComponent<ForceField> ();
-			ff.sizex = ff.initialSizeX;
-			ff.sizey = ff.initialSizeY;
+            ff.transform.localScale = new Vector3(ff.initialSizeX, ff.transform.localScale.y, ff.initialSizeY);
             if (ff.ffType == 0)
             {
                 go.GetComponent<Mass>().value = go.GetComponent<Mass>().initialValue;

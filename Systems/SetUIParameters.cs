@@ -14,6 +14,8 @@ public class SetUIParameters : FSystem {
 	private Family movingGO = FamilyManager.getFamily(new AllOfComponents(typeof(Move)));
     private Family undoredo = FamilyManager.getFamily(new AllOfComponents(typeof(UndoRedoValues)));
 
+    private bool changingSize = false;
+
     public SetUIParameters()
     {
         GameObject bP = gameInfo.First().GetComponent<GameInfo>().ballParameters;//parameters UI for the ball
@@ -26,7 +28,6 @@ public class SetUIParameters : FSystem {
             if (uiE.name == "SizeSlider")
             {
                 uiE.GetComponent<Slider>().onValueChanged.AddListener(SizeSliderChanged);
-                //uiE.GetComponent<Slider>().handleRect.gameObject.
             }
             else if (uiE.name == "SizeInputField")
             {
@@ -104,10 +105,10 @@ public class SetUIParameters : FSystem {
 						if (go.tag == "ForceField") {
 							foreach (Transform child in uiP.transform) {
 								GameObject uiE = child.gameObject;
-								if (uiE.name == "SizeSlider") {
-									uiE.GetComponent<Slider> ().value = (go.GetComponent<ForceField> ().sizex - 3) / 17;
-								} else if (uiE.name == "SizeInputField") {
-									uiE.GetComponent<InputField> ().text = "" + go.GetComponent<ForceField> ().sizex;
+								if (uiE.name == "SizeSlider" && !gameInfo.First().gameObject.GetComponent<GameInfo>().levelEditorMode) {
+									uiE.GetComponent<Slider> ().value = (go.transform.localScale.z - 3) / 17;
+								} else if (uiE.name == "SizeInputField" && !gameInfo.First().gameObject.GetComponent<GameInfo>().levelEditorMode) {
+									uiE.GetComponent<InputField> ().text = "" + go.GetComponent<ForceField> ().transform.localScale.z;
 								} else if (uiE.name == "ValueSlider") {
 									if (go.GetComponent<ForceField> ().ffType == 0) {
 										uiE.GetComponent<Slider>().value = (go.GetComponent<Mass>().value - 1) / 999;
@@ -229,12 +230,25 @@ public class SetUIParameters : FSystem {
 								if (uiE.name == "Locked") {//the locked ui element is an image that allow to see the ui but not to click on it
 									uiE.SetActive (!go.GetComponent<IsEditable> ().isEditable && !gameInfo.First().GetComponent<GameInfo>().levelEditorMode);//uiP locked in play mode when the go is not editable
 								} else if (uiE.name == "Delete") {//delete button
-									if (go.GetComponent<Draggable> ()) {//a go has an "Draggable" component when it can be edited (for example an obstacle doesn't have this component out of the editor mode)
-										uiE.SetActive (go.GetComponent<IsEditable> ().isEditable && go.GetComponent<Draggable> ().isDraggable);//the button is visible if the go is editable and draggable
-									} else {
-										uiE.SetActive (false);
-									}
-								}
+                                    if (!gameInfo.First().gameObject.GetComponent<GameInfo>().levelEditorMode)
+                                    {
+                                        if (go.GetComponent<Draggable>())
+                                        {//a go has an "Draggable" component when it can be edited (for example an obstacle doesn't have this component out of the editor mode)
+                                            uiE.SetActive(go.GetComponent<IsEditable>().isEditable && go.GetComponent<Draggable>().isDraggable);//the button is visible if the go is editable and draggable
+                                        }
+                                        else
+                                        {
+                                            uiE.SetActive(false);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        uiE.SetActive(true);
+                                    }
+								} else if(uiE.name == "LockedSize")
+                                {
+                                    uiE.SetActive(gameInfo.First().gameObject.GetComponent<GameInfo>().levelEditorMode);
+                                }
 							}
 							foreach (Transform child in bP.transform) {
 								GameObject uiE = child.gameObject;
@@ -294,7 +308,7 @@ public class SetUIParameters : FSystem {
                         bP.GetComponent<RectTransform>().position = Camera.main.WorldToScreenPoint(v);
                         bP.GetComponent<RectTransform>().position = new Vector3(bP.GetComponent<RectTransform>().position.x + bP.GetComponent<RectTransform>().rect.width / 2 + 20, bP.GetComponent<RectTransform>().position.y, bP.GetComponent<RectTransform>().position.z);
                     }
-                    else if(uiP.activeSelf)
+                    else if(uiP.activeSelf && !changingSize)
                     {
                         Vector3 v = new Vector3(go.transform.position.x, go.transform.position.y, go.transform.position.z - go.transform.localScale.z / 2);
                         uiP.GetComponent<RectTransform>().position = Camera.main.WorldToScreenPoint(v);
@@ -309,6 +323,10 @@ public class SetUIParameters : FSystem {
 			gameInfo.First ().GetComponent<GameInfo> ().uniformRotator.SetActive (false);   //hide ur
 			gameInfo.First ().GetComponent<GameInfo> ().editorUI.SetActive (false);         //hide editorUI
 		}
+        if(changingSize && Input.GetMouseButtonUp(0))
+        {
+            changingSize = false;
+        }
 	}
 
 	void SizeSliderChanged(float value){
@@ -331,6 +349,7 @@ public class SetUIParameters : FSystem {
 
             }
         }
+        changingSize = true;
     }
 
 	void SizeInputFieldChanged(string value){
@@ -351,7 +370,8 @@ public class SetUIParameters : FSystem {
                 undoredo.First().GetComponent<UndoRedoValues>().sliderGO = go.GetComponent<IDUndoRedo>().id;
 
             }
-		}
+        }
+        changingSize = true;
     }
 
 	void ValueSliderChanged(float value){

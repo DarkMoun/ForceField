@@ -56,9 +56,11 @@ public class DeleteObject : FSystem {
                     {
                         ur.editorUndoDeletedDirections.Push(go.GetComponent<ForceField>().direction);
                         ur.editorUndoDeletedPositions.Push(go.transform.position);
-                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizex);
-                        ur.editorUndoDeletedSizes.Push(go.GetComponent<ForceField>().sizey);
+                        ur.editorUndoDeletedSizes.Push(go.transform.localScale.z);
+                        ur.editorUndoDeletedSizes.Push(go.transform.localScale.x);
                         ur.editorUndoDeletedTypes.Push(go.GetComponent<ForceField>().ffType);
+                        ur.editorUndoDeletedDraggable.Push(go.GetComponent<Draggable>().canBeMovedOutOfEditor);
+                        ur.editorUndoDeletedEditable.Push(go.GetComponent<IsEditable>().isEditable);
                         if (go.GetComponent<ForceField>().ffType == 0)
                         {
                             ur.editorUndoDeletedValues.Push(go.GetComponent<Mass>().value);
@@ -97,9 +99,11 @@ public class DeleteObject : FSystem {
                         ur.undoActionTypes.Push(2);
                         ur.undoDeletedDirections.Push(go.GetComponent<ForceField>().direction);
                         ur.undoDeletedPositions.Push(go.transform.position);
-                        ur.undoDeletedSizes.Push(go.GetComponent<ForceField>().sizex);
-                        ur.undoDeletedSizes.Push(go.GetComponent<ForceField>().sizey);
+                        ur.undoDeletedSizes.Push(go.transform.localScale.z);
+                        ur.undoDeletedSizes.Push(go.transform.localScale.x);
                         ur.undoDeletedTypes.Push(go.GetComponent<ForceField>().ffType);
+                        ur.undoDeletedDraggable.Push(go.GetComponent<Draggable>().canBeMovedOutOfEditor);
+                        ur.undoDeletedEditable.Push(go.GetComponent<IsEditable>().isEditable);
                         if (go.GetComponent<ForceField>().ffType == 0)
                         {
                             ur.undoDeletedValues.Push(go.GetComponent<Mass>().value);

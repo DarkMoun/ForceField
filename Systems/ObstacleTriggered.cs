@@ -40,7 +40,7 @@ public class ObstacleTriggered : FSystem {
 
 	// Use to process your families.
 	protected override void onProcess(int familiesUpdateCount) {
-        if (!gameInfo.First().GetComponent<GameInfo>().triggered)
+        if (!gameInfo.First().GetComponent<GameInfo>().triggered && !gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
         {
             gameInfo.First().GetComponent<GameInfo>().levelLost = false;
             foreach (GameObject target in GameObject.FindGameObjectsWithTag("Obstacle"))

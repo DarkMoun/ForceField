@@ -65,13 +65,13 @@ public class DragObjects : FSystem {
                                 if (gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
                                 {
                                     undoredo.First().GetComponent<UndoRedoValues>().editorUndoActionTypes.Push(1);
-                                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedGO.Push(go);
+                                    undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedGO.Push(go.GetComponent<IDUndoRedo>().id);
                                     undoredo.First().GetComponent<UndoRedoValues>().editorUndoDraggedPositions.Push(go.transform.position);
                                 }
                                 else
                                 {
                                     undoredo.First().GetComponent<UndoRedoValues>().undoActionTypes.Push(1);
-                                    undoredo.First().GetComponent<UndoRedoValues>().undoDraggedGO.Push(go);
+                                    undoredo.First().GetComponent<UndoRedoValues>().undoDraggedGO.Push(go.GetComponent<IDUndoRedo>().id);
                                     undoredo.First().GetComponent<UndoRedoValues>().undoDraggedPositions.Push(go.transform.position);
                                 }
                             }

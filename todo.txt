@@ -1,4 +1,4 @@
-
+﻿
 A faire:
 	sauvegarder un niveau nécessite au moins une cible
 	intégration de TinCan/xAPI
@@ -18,25 +18,22 @@ Fonctionnalités possibles:
 	objet intermédiaire à récupérer dans les niveaux
 	compter le nombre de force field utilisé par rapport au minimum requis dans le niveau
 	afficher le score à la fin d'un niveau
-	proposer un niveau suivant?
-	*fonction redo (mode jeu et mode editeur)
+	proposer un niveau suivant? => Progression linéaire des niveaux plutôt que par embranchement
 	copier/coller des objet en editeur
 	intégration de l'outil de création d'un réseau de pétri
 	trail renderer? (afficher la trajectoire de la balle, trajectoire partielle ou dernière trajectoire de la balle)
 	ajouter obstacle changeant la charge de la balle
 	exporter et importer des niveaux
-	selection multiple + drag d'objet? (dans les deux modes de jeu)
-	rotation des champs de force uniform avec un drag plutot qu'un slider?
+	rotation des champs de force uniform avec un drag plutot qu'un slider
 	Ajouter des champs de force attractifs electrostatique (et non gravitationnel)
 	Créer des champs mélangeant gravitation et électrostatique?
 	afficher les coordonnées du vecteur direction de la balle
 	passer toutes les variables de "GameInfo" en variable statique?
 	empecher toute action lorsqu'on appuie sur play
-	laisser la possibilité de déplacer des champs de force pendant le déplacement de la balle?
-	peut-on undo après un "resetAll"?
+	laisser la possibilité de déplacer des champs de force pendant le déplacement de la balle? [A déterminer]
+	peut-on undo après un "resetAll"? Non mais mets warning avant ResetAll
 
 Bugs:
-	size (ui rouge)
+	*cacher l'ui pendant un drag
 	calculer l'accélération quand la masse de la balle est à 0
 	erreur de FYFY quand "on reset" alors que la balle trigger quelque chose
-	// /*(après avoir initialisé l'ui à la sélection, remodifier les valeurs de l'objet et du player avec les valeurs de l'ui (utile pour undo redo))*/ //je sais plus pourquoi

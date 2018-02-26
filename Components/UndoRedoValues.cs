@@ -14,8 +14,10 @@ public class UndoRedoValues : MonoBehaviour {
      * 5 - a toggle value was changed
      */
 
-    public Stack<int> focusedObject;
-    public Stack<int> editorFocusedObject;
+    public Stack<int> undoFocusedObject;
+    public Stack<int> editorUndoFocusedObject;
+    public Stack<int> redoFocusedObject;
+    public Stack<int> editorRedoFocusedObject;
     public bool theObjectIsSelected;
     public int idCount;
     public bool selectionChanged;
@@ -24,7 +26,7 @@ public class UndoRedoValues : MonoBehaviour {
     public Stack<int> undoActionTypes;
     public Stack<Slider> undoSliders;
     public Stack<float> undoSliderValues;
-    public Stack<GameObject> undoDraggedGO;
+    public Stack<int> undoDraggedGO;
     public Stack<Vector3> undoDraggedPositions;
     public Stack<int> undoDeletedTypes;//ff types for ff
     public Stack<int> undoDeletedIDs;
@@ -32,13 +34,15 @@ public class UndoRedoValues : MonoBehaviour {
     public Stack<float> undoDeletedDirections;
     public Stack<float> undoDeletedSizes;
     public Stack<float> undoDeletedValues;
+    public Stack<bool> undoDeletedDraggable;
+    public Stack<bool> undoDeletedEditable;
     public Stack<int> undoCreatedGO;
 
     //values for undo in editor mode
     public Stack<int> editorUndoActionTypes;
     public Stack<Slider> editorUndoSliders;
     public Stack<float> editorUndoSliderValues;
-    public Stack<GameObject> editorUndoDraggedGO;
+    public Stack<int> editorUndoDraggedGO;
     public Stack<Vector3> editorUndoDraggedPositions;
     public Stack<int> editorUndoDeletedTypes;//ff types for ff, -1 for target, -2 for circle obstacle, -3 for square obstacle
     public Stack<int> editorUndoDeletedIDs;
@@ -46,12 +50,40 @@ public class UndoRedoValues : MonoBehaviour {
     public Stack<float> editorUndoDeletedDirections;
     public Stack<float> editorUndoDeletedSizes;
     public Stack<float> editorUndoDeletedValues;
+    public Stack<bool> editorUndoDeletedDraggable;
+    public Stack<bool> editorUndoDeletedEditable;
     public Stack<int> editorUndoCreatedGO;
     public Stack<int> editorUndoGeneratorTypes;
     public Stack<int> editorUndoGeneratorMax;
     public Stack<Toggle> editorUndoToggles;
 
+    //values for redo in play mode
+    public Stack<int> redoActionTypes;
+    public Stack<Slider> redoSliders;
+    public Stack<float> redoSliderValues;
+    public Stack<int> redoDraggedGO;
+    public Stack<Vector3> redoDraggedPositions;
+    public Stack<int> redoDeletedIDs;
+    public Stack<int> redoCreatedGO;
+    public Stack<Vector3> redoCreatedGOPositions;
+    public Stack<int> redoCreatedGOTypes;//ff types
+
+    //values for redo in editor mode
+    public Stack<int> editorRedoActionTypes;
+    public Stack<Slider> editorRedoSliders;
+    public Stack<float> editorRedoSliderValues;
+    public Stack<int> editorRedoDraggedGO;
+    public Stack<Vector3> editorRedoDraggedPositions;
+    public Stack<int> editorRedoDeletedIDs;
+    public Stack<int> editorRedoCreatedGO;
+    public Stack<Vector3> editorRedoCreatedGOPositions;
+    public Stack<int> editorRedoCreatedGOTypes;//ff types for ff, -1 for target, -2 for circle obstacle, -3 for square obstacle
+    public Stack<int> editorRedoGeneratorTypes;
+    public Stack<int> editorRedoGeneratorMax;
+    public Stack<Toggle> editorRedoToggles;
+
     public bool undoing;
+    public bool redoing;
     public bool inputfieldChanged;
     public Slider slider;
     public Slider slider2;
