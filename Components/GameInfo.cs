@@ -15,6 +15,7 @@ public class GameInfo : MonoBehaviour {
     public GameObject levelSaved;
 
     public bool gamePaused = true;
+    public bool playing = false;
     public bool askResetLevel = false;//if true, the level will be reset
     public bool askResetBall = false;//if true, the ball position will be reset and the ball parameters will be set to the values of the player
     public bool askClearPlayUndo = false;

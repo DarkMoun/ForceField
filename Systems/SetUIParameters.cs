@@ -265,7 +265,7 @@ public class SetUIParameters : FSystem {
 					}
                     if(go.tag == "Object")
                     {//change ball direction with drag
-                        if (movingGO.First().GetComponent<Move>().directionGO.GetComponentInChildren<PointerOver>() && Input.GetMouseButtonDown(0))
+                        if (movingGO.First().GetComponent<Move>().directionGO.GetComponentInChildren<PointerOver>() && Input.GetMouseButtonDown(0) && !gameInfo.First().GetComponent<GameInfo>().playing)
                         {
                             gameInfo.First().GetComponent<GameInfo>().ballDirectionChanging = true;
                         }
@@ -338,7 +338,37 @@ public class SetUIParameters : FSystem {
         {
             changingSize = false;
         }
-	}
+
+        bool playing = gameInfo.First().GetComponent<GameInfo>().playing;
+        foreach(Transform child in bP.transform)
+        {
+            if(child.gameObject.name == "LockedPlaying")
+            {
+                child.gameObject.SetActive(playing);
+            }
+        }
+        foreach (Transform child in uiP.transform)
+        {
+            if (child.gameObject.name == "LockedPlaying")
+            {
+                child.gameObject.SetActive(playing);
+            }
+        }
+        foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().uipDelete.transform)
+        {
+            if (child.gameObject.name == "LockedPlaying")
+            {
+                child.gameObject.SetActive(playing);
+            }
+        }
+        foreach (Transform child in ur.transform)
+        {
+            if(child.gameObject.name == "LockedPlaying")
+            {
+                child.gameObject.SetActive(playing);
+            }
+        }
+    }
 
 	void SizeSliderChanged(float value){
 		foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().uiParameters.transform) {

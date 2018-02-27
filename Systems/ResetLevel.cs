@@ -102,6 +102,8 @@ public class ResetLevel : FSystem {
 		gameInfo.First ().GetComponent<GameInfo> ().levelLost = false;
         gameInfo.First().GetComponent<GameInfo>().triggered = false;
         gameInfo.First ().GetComponent<GameInfo> ().gamePaused = true;
+        gameInfo.First().GetComponent<GameInfo>().playing = false; ;
+
         Color uipColor = gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color;
         Color uipdColor = gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color;
         Color bpColor = gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color;

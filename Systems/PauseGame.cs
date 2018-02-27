@@ -48,6 +48,8 @@ public class PauseGame : FSystem {
 			}
 		}
 		gameInfo.First ().GetComponent<GameInfo> ().gamePaused = !gamePaused;
+        gameInfo.First().GetComponent<GameInfo>().playing = true;
+
         Color uipColor = gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color;
         Color uipdColor = gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color;
         Color bpColor = gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color;
