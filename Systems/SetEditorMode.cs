@@ -68,10 +68,16 @@ public class SetEditorMode : FSystem {
             else if (go.name == "Cancel")
             {
                 go.GetComponent<Button>().onClick.AddListener(CancelAlert);
-            }else if( go.name == "ValidateSaved")
+            }
+            else if (go.name == "ValidateSaved")
             {
                 go.GetComponent<Button>().onClick.AddListener(HideLevelSaved);
                 HideLevelSaved();
+            }
+            else if (go.name == "ValidateNoTarget")
+            {
+                go.GetComponent<Button>().onClick.AddListener(HideNoTargetAlert);
+                HideNoTargetAlert();
             }
         }
 
@@ -565,30 +571,48 @@ public class SetEditorMode : FSystem {
 
     void CheckAlertSave()
     {
-        bool alert = false;
-        foreach (GameObject ff in forceFields)
+        bool target = false;
+        foreach(Transform child in gameInfo.First().transform)
         {
-            if (ff.GetComponent<IsEditable>().isEditable && ff.GetComponent<Draggable>().canBeMovedOutOfEditor)
+            if(child.gameObject.tag == "Target")
             {
-                alert = true;
+                target = true;
                 break;
             }
         }
-        if (!alert)
+
+        if (target)
         {
-            SaveLevel();
-        }
-        else
-        {
-            gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(true);
-            foreach (Text t in gameInfo.First().GetComponent<GameInfo>().alertEditorMode.GetComponentsInChildren<Text>())
+            gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(false);
+            bool alert = false;
+            foreach (GameObject ff in forceFields)
             {
-                if (t.gameObject.transform.parent.gameObject.name == "Continue")
+                if (ff.GetComponent<IsEditable>().isEditable && ff.GetComponent<Draggable>().canBeMovedOutOfEditor)
                 {
-                    t.text = "Save";
+                    alert = true;
                     break;
                 }
             }
+            if (!alert)
+            {
+                SaveLevel();
+            }
+            else
+            {
+                gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(true);
+                foreach (Text t in gameInfo.First().GetComponent<GameInfo>().alertEditorMode.GetComponentsInChildren<Text>())
+                {
+                    if (t.gameObject.transform.parent.gameObject.name == "Continue")
+                    {
+                        t.text = "Save";
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(true);
         }
     }
 
@@ -854,6 +878,11 @@ public class SetEditorMode : FSystem {
     void HideLevelSaved()
     {
         gameInfo.First().GetComponent<GameInfo>().levelSaved.SetActive(false);
+    }
+
+    void HideNoTargetAlert()
+    {
+        gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(false);
     }
     
     void ValidateLevel(){

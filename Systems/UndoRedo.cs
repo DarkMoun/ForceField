@@ -131,7 +131,7 @@ public class UndoRedo : FSystem
     {
         UndoRedoValues ur = undoredo.First().GetComponent<UndoRedoValues>();
 
-        int a = -1;
+        /*int a = -1;
         int ae = -1;
         if(ur.undoActionTypes.Count != 0)
         {
@@ -141,7 +141,7 @@ public class UndoRedo : FSystem
         {
             ae = ur.editorUndoActionTypes.Peek();
         }
-        Debug.Log("Count: " + ur.undoActionTypes.Count + ": " + a + "   " + "CountE: " + ur.editorUndoActionTypes.Count + ": " + ae);
+        Debug.Log("Count: " + ur.undoActionTypes.Count + ": " + a + "   " + "CountE: " + ur.editorUndoActionTypes.Count + ": " + ae);*/
 
         if (!ur.redoing)
         {

@@ -12,6 +12,7 @@ public class GameInfo : MonoBehaviour {
     public GameObject editorUI;//ui only visible in editor mode
     public GameObject gameButtons;//pause, play, reset, go to menu
     public GameObject alertEditorMode;
+    public GameObject noTargetAlertEditorMode;
     public GameObject levelSaved;
 
     public bool gamePaused = true;

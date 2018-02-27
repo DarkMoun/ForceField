@@ -1,6 +1,5 @@
 ﻿
 A faire:
-	***sauvegarder un niveau nécessite au moins une cible
 	intégration de TinCan/xAPI
 	système d'aide
 	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences)
@@ -9,7 +8,7 @@ A faire:
 	tutoriel
 	visualisation des champs de vecteurs
 	validation de niveau avant la sauvegarde (et pouvoir sauvegarder des niveau non validé mais accessible qu'en editeur)
-	ajouter "content type" à chaque input field
+	***ajouter "content type" à chaque input field
 
 
 
