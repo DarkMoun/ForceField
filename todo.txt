@@ -2,13 +2,13 @@
 A faire:
 	intégration de TinCan/xAPI
 	système d'aide
-	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences)
-	sauvegarder la progression du joueur (niveaux effectués et compétences acquises+pouvoir créer de nouvelles compétences)
+	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences+pouvoir créer de nouvelles compétences)
+	sauvegarder la progression du joueur (niveaux effectués et compétences acquises)
 	permettre de choisir les valeurs min max des ui (editor mode) (changer les bornes des sliders [0;1]->[min;max])
 	tutoriel
 	visualisation des champs de vecteurs
-	validation de niveau avant la sauvegarde (et pouvoir sauvegarder des niveau non validé mais accessible qu'en editeur)
-	***ajouter "content type" à chaque input field
+	***validation de niveau avant la sauvegarde
+	pouvoir sauvegarder des niveau non validé mais accessible qu'en editeur
 
 
 
