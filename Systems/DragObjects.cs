@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using FYFY;
 using FYFY_plugins.PointerManager;
+using UnityEngine.UI;
 
 public class DragObjects : FSystem {
 	// Use this to update member variables when system pause. 
@@ -40,15 +41,33 @@ public class DragObjects : FSystem {
                     //set go to not dragged
 					go.GetComponent<Draggable> ().dragged = false;
 					gameInfo.First ().GetComponent<GameInfo> ().objectDragged = false;
+                    gameInfo.First().gameObject.GetComponent<GameInfo>().selectedChanged = true;
 					go.GetComponent<Draggable> ().canBeMoved = false;
-				}
+                    Color uipColor = gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color;
+                    Color uipdColor = gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color;
+                    Color bpColor = gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color;
+                    Color urColor = gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color;
+                    gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color = new Color(uipColor.r, uipColor.g, uipColor.b, 1);     //show uiP
+                    gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color = new Color(uipdColor.r, uipdColor.g, uipdColor.b, 1);     //show uiP delete button
+                    gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color = new Color(bpColor.r, bpColor.g, bpColor.b, 1);   //show bP
+                    gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color = new Color(urColor.r, urColor.g, urColor.b, 1);   //show ur
+                }
 			}
 		}
 		if (gameInfo.First ().GetComponent<GameInfo> ().objectDragged) {//if an object is dragged
 			foreach (GameObject go in draggable) {
 				Draggable d = go.GetComponent<Draggable> ();
-				if (d.isDraggable && d.dragged) {
-					Vector3 newPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y,Camera.main.transform.position.y-0.5f)) + d.fromMouseToCenter;//new position of the object
+				if (d.isDraggable && d.dragged)
+                {
+                    Color uipColor = gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color;
+                    Color uipdColor = gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color;
+                    Color bpColor = gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color;
+                    Color urColor = gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color;
+                    gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color = new Color(uipColor.r, uipColor.g, uipColor.b, 75f / 255);     //hide uiP
+                    gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color = new Color(uipdColor.r, uipdColor.g, uipdColor.b, 75f / 255);     //hide uiP delete button
+                    gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color = new Color(bpColor.r, bpColor.g, bpColor.b, 75f / 255);   //hide bP
+                    gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color = new Color(urColor.r, urColor.g, urColor.b, 75f / 255);   //hide ur
+                    Vector3 newPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y,Camera.main.transform.position.y-0.5f)) + d.fromMouseToCenter;//new position of the object
 					if (!d.canBeMoved) {
 						if ((newPos - d.positionBeforeDrag).magnitude > 1) {
                             /* the object can be moved only if the distance between the position before 

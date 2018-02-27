@@ -102,7 +102,15 @@ public class ResetLevel : FSystem {
 		gameInfo.First ().GetComponent<GameInfo> ().levelLost = false;
         gameInfo.First().GetComponent<GameInfo>().triggered = false;
         gameInfo.First ().GetComponent<GameInfo> ().gamePaused = true;
-	}
+        Color uipColor = gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color;
+        Color uipdColor = gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color;
+        Color bpColor = gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color;
+        Color urColor = gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color;
+        gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color = new Color(uipColor.r, uipColor.g, uipColor.b, 1);     //show uiP
+        gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color = new Color(uipdColor.r, uipdColor.g, uipdColor.b, 1);     //show uiP delete button
+        gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color = new Color(bpColor.r, bpColor.g, bpColor.b, 1);   //show bP
+        gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color = new Color(urColor.r, urColor.g, urColor.b, 1);   //show ur
+    }
 
 	void resetAll(){
 		resetBall ();

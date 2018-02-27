@@ -1138,6 +1138,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2a1339bfd159b0149a38735f7518eddc, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1747866896 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1101796948134700, guid: 2a1339bfd159b0149a38735f7518eddc,
+    type: 2}
+  m_PrefabInternal: {fileID: 1747866895}
 --- !u!1001 &1797720526
 Prefab:
   m_ObjectHideFlags: 0
@@ -1295,6 +1300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiParameters: {fileID: 1445681569}
+  uipDelete: {fileID: 1747866896}
   ballParameters: {fileID: 1578035188}
   uniformRotator: {fileID: 1495527149}
   distanceDisplayer: {fileID: 2005663896}

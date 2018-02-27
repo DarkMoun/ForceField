@@ -28,12 +28,9 @@ Fonctionnalités possibles:
 	Ajouter des champs de force attractifs electrostatique (et non gravitationnel)
 	Créer des champs mélangeant gravitation et électrostatique?
 	afficher les coordonnées du vecteur direction de la balle
-	passer toutes les variables de "GameInfo" en variable statique?
-	empecher toute action lorsqu'on appuie sur play
+	*empecher toute action lorsqu'on appuie sur play
 	laisser la possibilité de déplacer des champs de force pendant le déplacement de la balle? [A déterminer]
 	peut-on undo après un "resetAll"? Non mais mets warning avant ResetAll
 
 Bugs:
-	*cacher l'ui pendant un drag
 	calculer l'accélération quand la masse de la balle est à 0
-	erreur de FYFY quand "on reset" alors que la balle trigger quelque chose

@@ -4,6 +4,7 @@ public class GameInfo : MonoBehaviour {
     // Advice: FYFY component aims to contain only public members (according to Entity-Component-System paradigm).
     //UI gameobjects references
     public GameObject uiParameters;//ui for force fields
+    public GameObject uipDelete;//delete button for ff
     public GameObject ballParameters;//ui for the ball
     public GameObject uniformRotator;//ui to rotate uniform force fields
     public GameObject distanceDisplayer;//display the distance between 2 selected object or the position of the seleccted object

@@ -3,7 +3,6 @@ using FYFY;
 using UnityEngine.UI;
 using FYFY_plugins.PointerManager;
 using System;
-using System.Collections.Generic;
 
 public class SetUIParameters : FSystem {
 	// Use this to update member variables when system pause. 
@@ -285,6 +284,14 @@ public class SetUIParameters : FSystem {
                                     uiE.GetComponent<Slider>().value = value;
                                 }
                             }
+                            Color uipColor = gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color;
+                            Color uipdColor = gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color;
+                            Color bpColor = gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color;
+                            Color urColor = gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color;
+                            gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color = new Color(uipColor.r, uipColor.g, uipColor.b, 75f / 255);     //show uiP
+                            gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color = new Color(uipdColor.r, uipdColor.g, uipdColor.b, 75f / 255);     //show uiP delete button
+                            gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color = new Color(bpColor.r, bpColor.g, bpColor.b, 75f / 255);   //show bP
+                            gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color = new Color(urColor.r, urColor.g, urColor.b, 75f / 255);   //show ur
                             if (Input.GetMouseButtonUp(0))
                             {
                                 foreach (Transform child in bP.transform)
@@ -298,6 +305,10 @@ public class SetUIParameters : FSystem {
                                         undoredo.First().GetComponent<UndoRedoValues>().sliderGO = movingGO.First().GetComponent<IDUndoRedo>().id;
                                     }
                                 }
+                                gameInfo.First().GetComponent<GameInfo>().uiParameters.GetComponent<Image>().color = new Color(uipColor.r, uipColor.g, uipColor.b, 1);     //hide uiP
+                                gameInfo.First().GetComponent<GameInfo>().uipDelete.GetComponent<Image>().color = new Color(uipdColor.r, uipdColor.g, uipdColor.b, 1);     //hide uiP delete button
+                                gameInfo.First().GetComponent<GameInfo>().ballParameters.GetComponent<Image>().color = new Color(bpColor.r, bpColor.g, bpColor.b, 1);   //hide bP
+                                gameInfo.First().GetComponent<GameInfo>().uniformRotator.GetComponent<Image>().color = new Color(urColor.r, urColor.g, urColor.b, 1);   //hide ur
                                 gameInfo.First().GetComponent<GameInfo>().ballDirectionChanging = false;
                             }
                         }
