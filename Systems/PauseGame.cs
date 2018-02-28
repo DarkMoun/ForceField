@@ -8,6 +8,7 @@ public class PauseGame : FSystem {
 
 	private Family buttons = FamilyManager.getFamily(new AllOfComponents(typeof(Button)));
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
+    private Family movingGO = FamilyManager.getFamily(new AllOfComponents(typeof(Move)));
 
     public PauseGame()
     {
@@ -41,7 +42,12 @@ public class PauseGame : FSystem {
 
 	//pause or resume the game
 	void pauseGame(){
-		bool gamePaused = gameInfo.First ().GetComponent<GameInfo> ().gamePaused;
+        if (!gameInfo.First().GetComponent<GameInfo>().playing)
+        {
+            movingGO.First().GetComponentInChildren<LineRenderer>().positionCount = 0;
+            movingGO.First().GetComponent<Move>().lineRendererPositions.Clear();
+        }
+        bool gamePaused = gameInfo.First ().GetComponent<GameInfo> ().gamePaused;
 		foreach (FSystem s in FSystemManager.fixedUpdateSystems()) {
 			if (s.ToString() == "ApplyForce" || s.ToString() == "MoveSystem") {
 				s.Pause = !gamePaused;

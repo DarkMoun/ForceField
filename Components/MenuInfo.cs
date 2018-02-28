@@ -6,6 +6,7 @@ public class MenuInfo : MonoBehaviour {
 	public GameObject buttonPrefab;
     public int nbILevel;//number of levels created with the unity editor
     public int nbCLevel;//number of levels created with the game editor
+    public int nbELevel;//number of levels loadable with editor
 
     public MenuInfo()
     {

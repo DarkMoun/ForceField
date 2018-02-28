@@ -10,12 +10,14 @@ public class OnTargetTriggered : FSystem {
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
     private Family targets = FamilyManager.getFamily(new AnyOfTags("Target"));
 
+    private bool editorMode = false;
+
 	public OnTargetTriggered(){
         //listeners on buttons Retry and Menu when level is cleared
 		foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().levelClearedText.transform) {
 			if (child.gameObject.name == "Retry") {
-				child.gameObject.GetComponent<Button> ().onClick.AddListener (Retry);
-			} else if (child.gameObject.name == "Menu") {
+                child.gameObject.GetComponent<Button>().onClick.AddListener(ValidateOrRetry);
+            } else if (child.gameObject.name == "Menu") {
                 if (GameInfo.loadedFromEditor)
                 {
                     child.gameObject.GetComponentInChildren<Text>().text = "Edit";
@@ -68,16 +70,49 @@ public class OnTargetTriggered : FSystem {
             }
         }
 		gameInfo.First ().GetComponent<GameInfo> ().levelClearedText.SetActive (gameInfo.First().GetComponent<GameInfo>().levelCleared);//show the text if the level is cleared
-	}
 
-	void Retry()
-    {
-        gameInfo.First ().GetComponent<GameInfo> ().askResetLevel = true;//reset the level
-    }
+        if (editorMode && !gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
+        {
+            if (gameInfo.First().GetComponent<GameInfo>().validating)
+            {
+                foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().levelClearedText.transform)
+                {
+                    if (child.gameObject.name == "Retry")
+                    {
+                        child.gameObject.GetComponentInChildren<Text>().text = "Validate";
+                    }
+                }
+            }
+            else
+            {
+                foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().levelClearedText.transform)
+                {
+                    if (child.gameObject.name == "Retry")
+                    {
+                        child.gameObject.GetComponentInChildren<Text>().text = "Retry";
+                    }
+                }
+            }
+        }
+        editorMode = gameInfo.First().GetComponent<GameInfo>().levelEditorMode;
+	}
 
     void Edit()
     {
         gameInfo.First().GetComponent<GameInfo>().levelEditorMode = true;//enter editor mode
+    }
+
+    void ValidateOrRetry()
+    {
+        if (gameInfo.First().GetComponent<GameInfo>().validating)
+        {
+            gameInfo.First().GetComponent<GameInfo>().validated = true;
+            gameInfo.First().GetComponent<GameInfo>().levelEditorMode = true;//enter editor mode
+        }
+        else
+        {
+            gameInfo.First().GetComponent<GameInfo>().askResetLevel = true;//reset the level
+        }
     }
 
     void Menu()

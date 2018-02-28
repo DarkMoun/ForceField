@@ -8,8 +8,9 @@ public class ObstacleTriggered : FSystem {
 	// Advice: avoid to update your families inside this function.
 
 	private Family gameInfo = FamilyManager.getFamily(new AllOfComponents(typeof(GameInfo)));
+    private Family obstacles = FamilyManager.getFamily(new AnyOfTags("Obstacle"));
 
-	public ObstacleTriggered(){
+    public ObstacleTriggered(){
         //listeners on buttons Retry and Menu when level is failed
 		foreach (Transform child in gameInfo.First ().GetComponent<GameInfo> ().levelLostText.transform) {
 			if (child.gameObject.name == "Retry") {
@@ -43,7 +44,7 @@ public class ObstacleTriggered : FSystem {
         if (!gameInfo.First().GetComponent<GameInfo>().triggered && !gameInfo.First().GetComponent<GameInfo>().levelEditorMode)
         {
             gameInfo.First().GetComponent<GameInfo>().levelLost = false;
-            foreach (GameObject target in GameObject.FindGameObjectsWithTag("Obstacle"))
+            foreach (GameObject target in obstacles)
             {
                 Triggered3D t = target.GetComponent<Triggered3D>();
                 if (t)

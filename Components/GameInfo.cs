@@ -13,10 +13,13 @@ public class GameInfo : MonoBehaviour {
     public GameObject gameButtons;//pause, play, reset, go to menu
     public GameObject alertEditorMode;
     public GameObject noTargetAlertEditorMode;
+    public GameObject alertErase;
     public GameObject levelSaved;
 
     public bool gamePaused = true;
     public bool playing = false;
+    public bool validating = false;
+    public bool validated = false;
     public bool askResetLevel = false;//if true, the level will be reset
     public bool askResetBall = false;//if true, the ball position will be reset and the ball parameters will be set to the values of the player
     public bool askClearPlayUndo = false;
@@ -26,6 +29,7 @@ public class GameInfo : MonoBehaviour {
     public bool justEnteredEditorMode = true;
     public static bool loadedFromEditor = false;//this is true when the user selected editor mode from menu and false when a created level is opened in play mode (which still opens "LevelEditor" scene)
     public static int loadedLevelID = -1;
+    public static bool newLevel = true;
 
     //Texts for the end of a level
     public GameObject levelClearedText;

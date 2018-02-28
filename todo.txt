@@ -2,13 +2,11 @@
 A faire:
 	intégration de TinCan/xAPI
 	système d'aide
-	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences+pouvoir créer de nouvelles compétences)
+	importer la sauvegarde de niveau de l'autre projet (avec compétences et précédences + pouvoir créer de nouvelles compétences + choisir le nom du niveau)
 	sauvegarder la progression du joueur (niveaux effectués et compétences acquises)
 	permettre de choisir les valeurs min max des ui (editor mode) (changer les bornes des sliders [0;1]->[min;max])
 	tutoriel
 	visualisation des champs de vecteurs
-	***validation de niveau avant la sauvegarde
-	pouvoir sauvegarder des niveau non validé mais accessible qu'en editeur
 
 
 
@@ -19,7 +17,7 @@ Fonctionnalités possibles:
 	proposer un niveau suivant? => Progression linéaire des niveaux plutôt que par embranchement
 	copier/coller des objet en editeur
 	intégration de l'outil de création d'un réseau de pétri
-	trail renderer? (afficher la trajectoire de la balle, trajectoire partielle ou dernière trajectoire de la balle)
+	trajectoire partielle de la balle
 	ajouter obstacle changeant la charge de la balle
 	exporter et importer des niveaux
 	rotation des champs de force uniform avec un drag plutot qu'un slider
@@ -31,3 +29,4 @@ Fonctionnalités possibles:
 
 Bugs:
 	calculer l'accélération quand la masse de la balle est à 0
+	drag direction de la balle en bas à gauche -> le slider n'affiche pas la bonne valeur (ne pose aucun problème au jeu)

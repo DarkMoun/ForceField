@@ -21,6 +21,10 @@ public class SetEditorMode : FSystem {
 	private Family movingGO = FamilyManager.getFamily(new AllOfComponents(typeof(Move)));
     private Family undoredo = FamilyManager.getFamily(new AllOfComponents(typeof(UndoRedoValues)));
 
+    private bool erase = false;
+    private bool edit = true;
+    private bool canSave = false;
+
     public SetEditorMode() {
 		draggable.addEntryCallback (setCanBeDragged);
 		foreach (Slider s in gameInfo.First().GetComponent<GameInfo>().editorUI.GetComponentsInChildren<Slider>()) {
@@ -60,10 +64,10 @@ public class SetEditorMode : FSystem {
 			} else if (go.name == "SaveButton") {
 				go.GetComponent<Button> ().onClick.AddListener (CheckAlertSave);
 			} else if (go.name == "ValidateButton") {
-				go.GetComponent<Button> ().onClick.AddListener (ValidateLevel);
+				go.GetComponent<Button> ().onClick.AddListener (CheckAlertValidate);
 			}else if(go.name == "Continue")
             {
-                go.GetComponent<Button>().onClick.AddListener(SaveOrTry);
+                go.GetComponent<Button>().onClick.AddListener(SaveOrTryOrValidate);
             }
             else if (go.name == "Cancel")
             {
@@ -79,16 +83,28 @@ public class SetEditorMode : FSystem {
                 go.GetComponent<Button>().onClick.AddListener(HideNoTargetAlert);
                 HideNoTargetAlert();
             }
+            else if (go.name == "New")
+            {
+                go.GetComponent<Button>().onClick.AddListener(NewSave);
+            }
+            else if (go.name == "Erase")
+            {
+                go.GetComponent<Button>().onClick.AddListener(Erase);
+            }
         }
 
         GameInfo gi = gameInfo.First().GetComponent<GameInfo>();
         if (!GameInfo.loadedFromEditor)
         {
             gi.levelEditorMode = false;
-            LoadLevel("Level_" + GameInfo.loadedLevelID);
+            LoadLevel("Level_" + GameInfo.loadedLevelID, false);
         }
         else
         {
+            if (!GameInfo.newLevel)
+            {
+                LoadLevel("Editor_" + GameInfo.loadedLevelID, true);
+            }
             gi.levelEditorMode = true;
         }
 	}
@@ -129,11 +145,26 @@ public class SetEditorMode : FSystem {
                 }
             }
         }
+        if (gameInfo.First().GetComponent<GameInfo>().validated)
+        {
+            canSave = true;
+            gameInfo.First().GetComponent<GameInfo>().validated = false;
+        }
+        else
+        {
+            if (canSave)
+            {
+                erase = false;
+                canSave = false;
+                SaveLevel(false);
+            }
+        }
         if (editorMode) {
 			RectTransform rt = gameInfo.First ().GetComponent<GameInfo> ().gameButtons.GetComponent<RectTransform> ();
 			rt.sizeDelta = new Vector2 (171, rt.sizeDelta.y);
 			if (gameInfo.First ().GetComponent<GameInfo> ().justEnteredEditorMode) {
-				foreach (GameObject generator in ffGenerator) {
+                gameInfo.First().GetComponent<GameInfo>().validating = false;
+                foreach (GameObject generator in ffGenerator) {
 					generator.SetActive (true);
 					if (generator.name == "AttractiveCircleFieldGenerator" || generator.name == "RepulsiveCircleFieldGenerator" || generator.name == "UniformFieldGenerator") {
 						foreach (Transform child in generator.transform) {
@@ -492,7 +523,7 @@ public class SetEditorMode : FSystem {
 		gameInfo.First ().GetComponent<GameInfo> ().levelEditorMode = true;
 	}
 
-    void SaveOrTry()
+    void SaveOrTryOrValidate()
     {
         foreach (Text t in gameInfo.First().GetComponent<GameInfo>().alertEditorMode.GetComponentsInChildren<Text>())
         {
@@ -501,9 +532,31 @@ public class SetEditorMode : FSystem {
                 if(t.text == "Try Level")
                 {
                     ActivatePlayMode();
-                }else if(t.text == "Save")
+                }
+                else if (t.text == "Save")
                 {
-                    SaveLevel();
+                    if (File.Exists(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt"))
+                    {
+                        string text = File.ReadAllText(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt");
+                        if (text.Contains("Editor_" + GameInfo.loadedLevelID))
+                        {
+                            edit = true;
+                            gameInfo.First().GetComponent<GameInfo>().alertErase.SetActive(true);
+                        }
+                        else
+                        {
+                            SaveLevel(true);
+                        }
+                    }
+                    else
+                    {
+                        SaveLevel(true);
+                    }
+                }
+                else if (t.text == "Validate")
+                {
+                    ActivatePlayMode();
+                    gameInfo.First().GetComponent<GameInfo>().validating = true;
                 }
                 gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(false);
                 break;
@@ -514,6 +567,20 @@ public class SetEditorMode : FSystem {
     void CancelAlert()
     {
         gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(false);
+    }
+
+    void NewSave()
+    {
+        erase = false;
+        gameInfo.First().GetComponent<GameInfo>().alertErase.SetActive(false);
+        SaveLevel(edit);
+    }
+
+    void Erase()
+    {
+        erase = true;
+        gameInfo.First().GetComponent<GameInfo>().alertErase.SetActive(false);
+        SaveLevel(edit);
     }
 
     void CheckAlertTry()
@@ -545,6 +612,60 @@ public class SetEditorMode : FSystem {
         }
     }
 
+    void CheckAlertValidate()
+    {
+        bool target = false;
+        foreach (Transform child in gameInfo.First().transform)
+        {
+            if (child.gameObject.tag == "Target")
+            {
+                target = true;
+                break;
+            }
+        }
+
+        if (target)
+        {
+            gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(false);
+            bool alert = false;
+            foreach (GameObject ff in forceFields)
+            {
+                if (ff.GetComponent<IsEditable>().isEditable && ff.GetComponent<Draggable>().canBeMovedOutOfEditor)
+                {
+                    alert = true;
+                    break;
+                }
+            }
+            if (!alert)
+            {
+                ActivatePlayMode();
+                gameInfo.First().GetComponent<GameInfo>().validating = true;
+            }
+            else
+            {
+                gameInfo.First().GetComponent<GameInfo>().alertEditorMode.SetActive(true);
+                foreach (Text t in gameInfo.First().GetComponent<GameInfo>().alertEditorMode.GetComponentsInChildren<Text>())
+                {
+                    if (t.gameObject.transform.parent.gameObject.name == "Continue")
+                    {
+                        t.text = "Validate";
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach (Transform child in gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.transform)
+            {
+                if (child.gameObject.name == "Title")
+                {
+                    child.gameObject.GetComponent<Text>().text = "A level can't be validated without a target";
+                }
+            }
+            gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(true);
+        }
+    }
 
     void ActivatePlayMode()
     {
@@ -583,7 +704,7 @@ public class SetEditorMode : FSystem {
 
         if (target)
         {
-            gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(false);
+            gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(false); 
             bool alert = false;
             foreach (GameObject ff in forceFields)
             {
@@ -595,7 +716,23 @@ public class SetEditorMode : FSystem {
             }
             if (!alert)
             {
-                SaveLevel();
+                if (File.Exists(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt"))
+                {
+                    string text = File.ReadAllText(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt");
+                    if (text.Contains("Editor_" + GameInfo.loadedLevelID))
+                    {
+                        edit = true;
+                        gameInfo.First().GetComponent<GameInfo>().alertErase.SetActive(true);
+                    }
+                    else
+                    {
+                        SaveLevel(true);
+                    }
+                }
+                else
+                {
+                    SaveLevel(true);
+                }
             }
             else
             {
@@ -612,12 +749,19 @@ public class SetEditorMode : FSystem {
         }
         else
         {
+            foreach(Transform child in gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.transform)
+            {
+                if(child.gameObject.name == "Title")
+                {
+                    child.gameObject.GetComponent<Text>().text = "A level can't be saved without a target";
+                }
+            }
             gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(true);
         }
     }
 
 
-    void SaveLevel(){
+    void SaveLevel(bool editing){
         LevelData level = new LevelData();
         GameInfo gi = gameInfo.First().GetComponent<GameInfo>();
 
@@ -846,31 +990,86 @@ public class SetEditorMode : FSystem {
             }
         }
 
-        //get number of levels
-        int nbLevel = 0;
-        if (File.Exists(Application.persistentDataPath + "/Level_Names.txt"))
+        if (erase)
         {
-            string[] lines = File.ReadAllLines(Application.persistentDataPath + "/Level_Names.txt");
-            nbLevel = lines.Length;
+            if (editing)
+            {
+                //serialize and save level
+                BinaryFormatter binary = new BinaryFormatter();
+                File.Delete(Application.persistentDataPath + "/Editor/Editor_" + GameInfo.loadedLevelID + ".dat");
+                FileStream file = File.Create(Application.persistentDataPath + "/Editor/Editor_" + GameInfo.loadedLevelID + ".dat");
+                binary.Serialize(file, level);
+                file.Close();
+            }
+            else
+            {
+                //serialize and save level
+                BinaryFormatter binary = new BinaryFormatter();
+                File.Delete(Application.persistentDataPath + "/Level/Level_" + GameInfo.loadedLevelID + ".dat");
+                FileStream file = File.Create(Application.persistentDataPath + "/Level/Level_" + GameInfo.loadedLevelID + ".dat");
+                binary.Serialize(file, level);
+                file.Close();
+            }
         }
         else
         {
-            File.Create(Application.persistentDataPath + "/Level_Names.txt");
-        }
-        if(nbLevel == 0)
-        {
-            File.AppendAllText(Application.persistentDataPath + "/Level_Names.txt", "Level_" + (nbLevel + 1));
-        }
-        else
-        {
-            File.AppendAllText(Application.persistentDataPath + "/Level_Names.txt", "\r\n" + "Level_" + (nbLevel + 1));
-        }
+            if (editing)
+            {
+                //get number of levels
+                int nbLevel = 0;
+                if (File.Exists(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt"))
+                {
+                    string[] lines = File.ReadAllLines(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt");
+                    nbLevel = lines.Length;
+                }
+                else
+                {
+                    File.Create(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt");
+                }
+                if (nbLevel == 0)
+                {
+                    File.AppendAllText(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt", "Editor_" + (nbLevel + 1));
+                }
+                else
+                {
+                    File.AppendAllText(Application.persistentDataPath + "/Editor/Editing_Level_Names.txt", "\r\n" + "Editor_" + (nbLevel + 1));
+                }
 
-        //serialize and save level
-        BinaryFormatter binary = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/Level_" + (nbLevel + 1) + ".dat");
-        binary.Serialize(file, level);
-        file.Close();
+                //serialize and save level
+                BinaryFormatter binary = new BinaryFormatter();
+                FileStream file = File.Create(Application.persistentDataPath + "/Editor/Editor_" + (nbLevel + 1) + ".dat");
+                binary.Serialize(file, level);
+                file.Close();
+            }
+            else
+            {
+                //get number of levels
+                int nbLevel = 0;
+                if (File.Exists(Application.persistentDataPath + "/Level/Level_Names.txt"))
+                {
+                    string[] lines = File.ReadAllLines(Application.persistentDataPath + "/Level/Level_Names.txt");
+                    nbLevel = lines.Length;
+                }
+                else
+                {
+                    File.Create(Application.persistentDataPath + "/Level/Level_Names.txt");
+                }
+                if (nbLevel == 0)
+                {
+                    File.AppendAllText(Application.persistentDataPath + "/Level/Level_Names.txt", "Level_" + (nbLevel + 1));
+                }
+                else
+                {
+                    File.AppendAllText(Application.persistentDataPath + "/Level/Level_Names.txt", "\r\n" + "Level_" + (nbLevel + 1));
+                }
+
+                //serialize and save level
+                BinaryFormatter binary = new BinaryFormatter();
+                FileStream file = File.Create(Application.persistentDataPath + "/Level/Level_" + (nbLevel + 1) + ".dat");
+                binary.Serialize(file, level);
+                file.Close();
+            }
+        }
 
         gameInfo.First().GetComponent<GameInfo>().levelSaved.SetActive(true);
     }
@@ -884,20 +1083,29 @@ public class SetEditorMode : FSystem {
     {
         gameInfo.First().GetComponent<GameInfo>().noTargetAlertEditorMode.SetActive(false);
     }
-    
-    void ValidateLevel(){
 
-	}
-
-    bool LoadLevel(string name)
+    bool LoadLevel(string name, bool editing)
     {
-        if(File.Exists(Application.persistentDataPath+ "/" + name + ".dat"))
+        if((File.Exists(Application.persistentDataPath+ "/Level/" + name + ".dat") && !editing) || (File.Exists(Application.persistentDataPath + "/Editor/" + name + ".dat") && editing))
         {
-            //load data from file
-            BinaryFormatter binary = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/" + name + ".dat", FileMode.Open);
-            LevelData level = (LevelData)binary.Deserialize(file);
-            file.Close();
+            LevelData level = null;
+
+            if (editing)
+            {
+                //load data from file
+                BinaryFormatter binary = new BinaryFormatter();
+                FileStream file = File.Open(Application.persistentDataPath + "/Editor/" + name + ".dat", FileMode.Open);
+                level = (LevelData)binary.Deserialize(file);
+                file.Close();
+            }
+            else
+            {
+                //load data from file
+                BinaryFormatter binary = new BinaryFormatter();
+                FileStream file = File.Open(Application.persistentDataPath + "/Level/" + name + ".dat", FileMode.Open);
+                level = (LevelData)binary.Deserialize(file);
+                file.Close();
+            }
 
             //set level with data
             GameInfo gi = gameInfo.First().GetComponent<GameInfo>();
